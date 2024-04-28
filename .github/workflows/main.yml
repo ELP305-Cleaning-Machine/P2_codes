@@ -16,4 +16,4 @@ jobs:
         uses: actionsx/prettier@v3
         with:
           # Specify your Prettier command here
-          args: "write BUS/**/*.ino --print-width 60"
+          args: "write BUS/BUS.ino --print-width 60"

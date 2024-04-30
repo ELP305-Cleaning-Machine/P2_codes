@@ -15,54 +15,55 @@
     MD_MAX72XX::PAROLA_HW ///< The type of hardware being
                           ///< used.
 
-MD_Parola P = MD_Parola(
+MD_Parola g_P = MD_Parola(
     HARDWARE_TYPE, DATA_PIN, CLK_PIN, CS_PIN,
     MAX_DEVICES); ///< Instance of the MD_Parola class.
-int stop = 0;     ///< Stop variable.
+int g_iStop = 0;  ///< Stop variable.
 
-uint8_t scrollSpeed = 25; ///< The speed of the scroll.
-textEffect_t scrollEffect =
+uint8_t g_uiScrollSpeed = 25; ///< The speed of the scroll.
+textEffect_t g_scrollEffect =
     PA_SCROLL_LEFT; ///< The effect of the scroll.
-textPosition_t scrollAlign =
+textPosition_t g_scrollAlign =
     PA_LEFT; ///< The alignment of the scroll.
-uint16_t scrollPause =
+uint16_t g_uiScrollPause =
     200; ///< The pause time of the scroll in milliseconds.
 
 #define BUF_SIZE 75 ///< The size of the buffer.
-char curMessage[BUF_SIZE] = {""}; ///< The current message.
-char newMessage[BUF_SIZE] = {
+char g_szCurMessage[BUF_SIZE] = {
+    ""}; ///< The current message.
+char g_szNewMessage[BUF_SIZE] = {
     "OUT OF SERVICE."}; ///< The new message.
-bool newMessageAvailable =
+bool g_bNewMessageAvailable =
     true; ///< Flag to check if a new message is available.
-char Buffer[3] = " "; ///< Buffer to hold the numbers.
+char g_szBuffer[3] = " "; ///< Buffer to hold the numbers.
 
-uint8_t broadcastAddress[] = {
+uint8_t g_uiBroadcastAddress[] = {
     0xEC, 0x64, 0xC9,
     0x86, 0x13, 0xC0}; ///< The broadcast address.
 
-int flag = 0;             ///< Flag variable.
-unsigned long dwTime;     ///< Time variable.
-unsigned long dwTimeLast; ///< Last time variable.
-bool service = true;      ///< Service flag.
-int nHalt = 0;            ///< Halt variable.
-int nService = 0;         ///< Service variable.
-int initial = 0;          ///< Initial variable.
+int g_iFlag = 0;            ///< Flag variable.
+unsigned long g_ulTime;     ///< Time variable.
+unsigned long g_ulTimeLast; ///< Last time variable.
+bool g_bService = true;     ///< Service flag.
+int g_iNHalt = 0;           ///< Halt variable.
+int g_iNService = 0;        ///< Service variable.
+int g_iInitial = 0;         ///< Initial variable.
 
-int nStopID = 2;       ///< Unique ID of the operating stop.
-const int nBusNum = 1; ///< Total number of buses.
-const int nStopNum = 2;   ///< Total number of stops.
-int rgEstimated[nBusNum]; ///< Array to store estimated
-                          ///< times in seconds.
-int rgScheduled[nStopNum][nStopNum] = {
+int g_iNStopID = 2; ///< Unique ID of the operating stop.
+const int g_iNBusNum = 1;      ///< Total number of buses.
+const int g_iNStopNum = 2;     ///< Total number of stops.
+int g_rgEstimated[g_iNBusNum]; ///< Array to store estimated
+                               ///< times in seconds.
+int g_rgScheduled[g_iNStopNum][g_iNStopNum] = {
     {100, 50}, {50, 100}}; ///< 2D array to store scheduled
                            ///< times in seconds.
 
-esp_now_peer_info_t peerInfo; ///< Peer information.
+esp_now_peer_info_t g_peerInfo; ///< Peer information.
 
-bool halt = false; ///< Halt flag.
-int nShowTime = 0; ///< Show time variable.
+bool g_bHalt = false; ///< Halt flag.
+int g_iNShowTime = 0; ///< Show time variable.
 
-uint8_t busMAC[] = {
+uint8_t g_uiBusMAC[] = {
     0xE8, 0x6B, 0xEA, 0xD4,
     0x27, 0x7C}; ///< MAC address of the receiver (bus).
 
@@ -70,7 +71,7 @@ typedef struct
 {
     bool buttonPressed; ///< Button pressed flag.
 } Message;              ///< Structure to send data.
-volatile bool button =
+volatile bool g_bButton =
     false; ///< Flag to indicate if the button is pressed
 
 /**
@@ -85,10 +86,10 @@ volatile bool button =
  */
 void IRAM_ATTR handleInterrupt()
 {
-    button = true;
+    g_bButton = true;
 }
 
-int buttonPin = 0; ///< The pin connected to the button.
+int g_iButtonPin = 0; ///< The pin connected to the button.
 
 //////////////////////////////////////
 
@@ -136,7 +137,8 @@ void UpdateInterrupt(int nBusIndex, int nBusStop,
 {
     // On Interrupt update the scheduled times for the given
     // bus
-    rgEstimated[nBusIndex] = rgScheduled[nBusStop][nStopID];
+    g_rgEstimated[nBusIndex] =
+        g_rgScheduled[nBusStop][nStopID];
 }
 
 /**
@@ -148,15 +150,15 @@ void UpdateInterrupt(int nBusIndex, int nBusStop,
 int UpdateEstimated()
 {
     // Decrementing the times and taking minm
-    for (int nBusID = 0; nBusID < nBusNum; nBusID++)
+    for (int nBusID = 0; nBusID < g_iNBusNum; nBusID++)
     {
-        rgEstimated[nBusID] =
-            max(0, rgEstimated[nBusID] - 1);
+        g_rgEstimated[nBusID] =
+            max(0, g_rgEstimated[nBusID] - 1);
     }
-    int nMinm = rgEstimated[0];
-    for (int nBusID = 0; nBusID < nBusNum; nBusID++)
+    int nMinm = g_rgEstimated[0];
+    for (int nBusID = 0; nBusID < g_iNBusNum; nBusID++)
     {
-        nMinm = min(nMinm, rgEstimated[nBusID]);
+        nMinm = min(nMinm, g_rgEstimated[nBusID]);
     }
     return nMinm;
 }
@@ -181,8 +183,8 @@ typedef struct struct_message
     int nDirection;
 } struct_message;
 
-struct_message Send_Data;    ///< Data to send.
-struct_message Recieve_Data; ///< Data received.
+struct_message g_Send_Data;    ///< Data to send.
+struct_message g_Recieve_Data; ///< Data received.
 // callback function that will be executed when data is
 // received
 
@@ -195,86 +197,87 @@ struct_message Recieve_Data; ///< Data received.
  * updates the status of the bus (halted, moving, out of
  * service, etc.) and the estimated time of arrival.
  *
- * @param mac The MAC address of the sender.
- * @param incomingData The incoming data.
- * @param len The length of the incoming data.
+ * @param pucMac The MAC address of the sender.
+ * @param pucIncomingData The incoming data.
+ * @param iLen The length of the incoming data.
  */
-void OnDataRecv(const uint8_t *mac,
-                const uint8_t *incomingData, int len)
+void OnDataRecv(const uint8_t *pucMac,
+                const uint8_t *pucIncomingData, int iLen)
 {
-    initial = 1;
-    memcpy(&Recieve_Data, incomingData,
-           sizeof(Recieve_Data));
+    g_iInitial = 1;
+    memcpy(&g_RecieveData, pucIncomingData,
+           sizeof(g_RecieveData));
     Serial.println("received");
-    Serial.println(Recieve_Data.a);
-    if (Recieve_Data.nBusStop != 0)
+    Serial.println(g_RecieveData.strMessage);
+    if (g_RecieveData.iBusStop != 0)
     {
-        if (Recieve_Data.a == "BUS OOS")
+        if (g_RecieveData.strMessage == "BUS OOS")
         {
-            service = false;
-            nService = 0;
+            g_bService = false;
+            g_iService = 0;
         }
-        else if (Recieve_Data.a == "BUS NOOS")
+        else if (g_RecieveData.strMessage == "BUS NOOS")
         {
-            service = true;
+            g_bService = true;
         }
-        else if (Recieve_Data.a == "BUS HALTED")
+        else if (g_RecieveData.strMessage == "BUS HALTED")
         {
-            halt = true;
-            nHalt = 0;
+            g_bHalt = true;
+            g_iHalt = 0;
         }
-        else if (Recieve_Data.a == "BUS MOVING")
+        else if (g_RecieveData.strMessage == "BUS MOVING")
         {
-            halt = false;
+            g_bHalt = false;
         }
         else
         {
-            initial = 1;
+            g_iInitial = 1;
             Serial.println("Bus Departing from other stop");
-            if (Recieve_Data.nDirection == 0)
+            if (g_RecieveData.iDirection == 0)
             {
-                UpdateInterrupt(Recieve_Data.nBusIndex - 1,
-                                Recieve_Data.nBusStop - 1,
-                                nStopID - 1);
+                UpdateInterrupt(g_RecieveData.iBusIndex - 1,
+                                g_RecieveData.iBusStop - 1,
+                                g_iStopID - 1);
             }
             else
             {
-                UpdateInterrupt(Recieve_Data.nBusIndex - 1,
-                                nStopID - 1,
-                                Recieve_Data.nBusStop - 1);
+                UpdateInterrupt(g_RecieveData.iBusIndex - 1,
+                                g_iStopID - 1,
+                                g_RecieveData.iBusStop - 1);
             }
         }
     }
-    if (Recieve_Data.nBusStop == 0)
+    if (g_RecieveData.iBusStop == 0)
     {
-        if (Recieve_Data.a == "BUS STOPPED!")
+        if (g_RecieveData.strMessage == "BUS STOPPED!")
         {
-            stop = 1;
+            g_iStop = 1;
             Serial.println("BUS ARRIVED!");
             // nothing
         }
-        else if (Recieve_Data.a == "BUS STARTED!")
+        else if (g_RecieveData.strMessage == "BUS STARTED!")
         {
-            initial = 1;
-            stop = 0;
+            g_iInitial = 1;
+            g_iStop = 0;
             Serial.println("BUS DEPARTING!");
-            Send_Data.a = "BusStop A";
-            Send_Data.nBusStop = nStopID;
-            Send_Data.nBusIndex = Recieve_Data.nBusIndex;
-            Send_Data.nDirection = Recieve_Data.nDirection;
-            // Send_Data.from_where=0;
-            UpdateInterrupt(Recieve_Data.nBusIndex - 1,
-                            nStopID - 1, nStopID - 1);
+            g_SendData.strMessage = "BusStop A";
+            g_SendData.iBusStop = g_iStopID;
+            g_SendData.iBusIndex = g_RecieveData.iBusIndex;
+            g_SendData.iDirection =
+                g_RecieveData.iDirection;
+            // g_SendData.from_where=0;
+            UpdateInterrupt(g_RecieveData.iBusIndex - 1,
+                            g_iStopID - 1, g_iStopID - 1);
             // flag = 1;
             delay(1000);
-            send_data(broadcastAddress,
-                      (uint8_t *)&Send_Data,
-                      sizeof(Send_Data));
-            /*esp_err_t result =
-            esp_now_send(broadcastAddress, (uint8_t *)
-            &Send_Data, sizeof(Send_Data));
+            send_data(g_arrBroadcastAddress,
+                      (uint8_t *)&g_SendData,
+                      sizeof(g_SendData));
+            /*esp_err_t eResult =
+            esp_now_send(g_arrBroadcastAddress, (uint8_t *)
+            &g_SendData, sizeof(g_SendData));
 
-            if (result == ESP_OK) {
+            if (eResult == ESP_OK) {
               Serial.println("Sent with success");
             }
             else {
@@ -282,50 +285,53 @@ void OnDataRecv(const uint8_t *mac,
             }*/
         }
 
-        else if (Recieve_Data.a == "BUS HALTED")
+        else if (g_RecieveData.strMessage == "BUS HALTED")
         {
-            halt = true;
-            nHalt = 0;
+            g_bHalt = true;
+            g_iHalt = 0;
             Serial.println("BUS HALTED");
-            Send_Data.a = "BUS HALTED";
-            Send_Data.nBusStop = nStopID;
-            Send_Data.nBusIndex = Recieve_Data.nBusIndex;
-            Send_Data.nDirection = Recieve_Data.nDirection;
-            send_data(broadcastAddress,
-                      (uint8_t *)&Send_Data,
-                      sizeof(Send_Data));
+            g_SendData.strMessage = "BUS HALTED";
+            g_SendData.iBusStop = g_iStopID;
+            g_SendData.iBusIndex = g_RecieveData.iBusIndex;
+            g_SendData.iDirection =
+                g_RecieveData.iDirection;
+            send_data(g_arrBroadcastAddress,
+                      (uint8_t *)&g_SendData,
+                      sizeof(g_SendData));
         }
-        else if (Recieve_Data.a == "BUS MOVING")
+        else if (g_RecieveData.strMessage == "BUS MOVING")
         {
-            halt = false;
+            g_bHalt = false;
             Serial.println("BUS MOVING");
-            Send_Data.a = "BUS MOVING";
-            Send_Data.nBusStop = nStopID;
-            Send_Data.nBusIndex = Recieve_Data.nBusIndex;
-            Send_Data.nDirection = Recieve_Data.nDirection;
-            send_data(broadcastAddress,
-                      (uint8_t *)&Send_Data,
-                      sizeof(Send_Data));
+            g_SendData.strMessage = "BUS MOVING";
+            g_SendData.iBusStop = g_iStopID;
+            g_SendData.iBusIndex = g_RecieveData.iBusIndex;
+            g_SendData.iDirection =
+                g_RecieveData.iDirection;
+            send_data(g_arrBroadcastAddress,
+                      (uint8_t *)&g_SendData,
+                      sizeof(g_SendData));
         }
 
-        else if (Recieve_Data.a == "BUS OOS")
+        else if (g_RecieveData.strMessage == "BUS OOS")
         {
-            service = false;
-            nService = 0;
+            g_bService = false;
+            g_iService = 0;
             Serial.println("BUS OOS");
-            Send_Data.a = "BUS OOS";
-            Send_Data.nBusStop = nStopID;
-            Send_Data.nBusIndex = Recieve_Data.nBusIndex;
-            Send_Data.nDirection = Recieve_Data.nDirection;
-            send_data(broadcastAddress,
-                      (uint8_t *)&Send_Data,
-                      sizeof(Send_Data));
+            g_SendData.strMessage = "BUS OOS";
+            g_SendData.iBusStop = g_iStopID;
+            g_SendData.iBusIndex = g_RecieveData.iBusIndex;
+            g_SendData.iDirection =
+                g_RecieveData.iDirection;
+            send_data(g_arrBroadcastAddress,
+                      (uint8_t *)&g_SendData,
+                      sizeof(g_SendData));
 
-            /* esp_err_t result =
-             esp_now_send(broadcastAddress, (uint8_t *)
-             &Send_Data, sizeof(Send_Data));
+            /* esp_err_t eResult =
+             esp_now_send(g_arrBroadcastAddress, (uint8_t *)
+             &g_SendData, sizeof(g_SendData));
 
-             if (result == ESP_OK) {
+             if (eResult == ESP_OK) {
                Serial.println("Sent with success");
              }
              else {
@@ -334,21 +340,22 @@ void OnDataRecv(const uint8_t *mac,
         }
         else
         {
-            service = true;
+            g_bService = true;
             Serial.println("BUS NOOS");
-            Send_Data.a = "BUS NOOS";
-            Send_Data.nBusStop = nStopID;
-            Send_Data.nBusIndex = Recieve_Data.nBusIndex;
-            Send_Data.nDirection = Recieve_Data.nDirection;
-            send_data(broadcastAddress,
-                      (uint8_t *)&Send_Data,
-                      sizeof(Send_Data));
+            g_SendData.strMessage = "BUS NOOS";
+            g_SendData.iBusStop = g_iStopID;
+            g_SendData.iBusIndex = g_RecieveData.iBusIndex;
+            g_SendData.iDirection =
+                g_RecieveData.iDirection;
+            send_data(g_arrBroadcastAddress,
+                      (uint8_t *)&g_SendData,
+                      sizeof(g_SendData));
 
-            /*esp_err_t result =
-            esp_now_send(broadcastAddress, (uint8_t *)
-            &Send_Data, sizeof(Send_Data));
+            /*esp_err_t eResult =
+            esp_now_send(g_arrBroadcastAddress, (uint8_t *)
+            &g_SendData, sizeof(g_SendData));
 
-            if (result == ESP_OK) {
+            if (eResult == ESP_OK) {
               Serial.println("Sent with success");
             }
             else {
@@ -366,23 +373,22 @@ void OnDataRecv(const uint8_t *mac,
  * It prints "Delivery Success" if the packet was sent
  * successfully, otherwise it prints "Delivery Fail".
  *
- * @param mac_addr The MAC address of the receiver.
- * @param status The status of the send operation.
+ * @param pucMacAddr The MAC address of the receiver.
+ * @param eStatus The status of the send operation.
  */
-void OnDataSent(const uint8_t *mac_addr,
-                esp_now_send_status_t status)
+void OnDataSent(const uint8_t *pucMacAddr,
+                esp_now_send_status_t eStatus)
 {
     Serial.print("\r\nLast Packet Send Status:\t");
-    Serial.println(status == ESP_NOW_SEND_SUCCESS
+    Serial.println(eStatus == ESP_NOW_SEND_SUCCESS
                        ? "Delivery Success"
                        : "Delivery Fail");
 }
-
 /**
  * @brief Setup function for the Arduino sketch.
  *
  * This function initializes the serial monitor, sets the
- * device as a Wi-Fi station, initializes ESP-NOW, registers
+ * device as a Wi-Fi Station, initializes ESP-NOW, registers
  * callback functions, sets up the button interrupt, and
  * initializes the display.
  */
@@ -402,7 +408,7 @@ void setup()
         return;
     }
 
-    memcpy(peerInfo.peer_addr, broadcastAddress, 6);
+    memcpy(peerInfo.peer_addr, g_arrBroadcastAddress, 6);
     peerInfo.channel = 4;
     peerInfo.encrypt = false;
 
@@ -419,15 +425,15 @@ void setup()
 
     ///////////////////////////////////////////////////////////////
 
-    pinMode(buttonPin, INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(buttonPin),
+    pinMode(g_iButtonPin, INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(g_iButtonPin),
                     handleInterrupt, FALLING);
 
     // Define and add the peer (the bus ESP32)
     esp_now_peer_info_t bus_peer;
     memset(&bus_peer, 0,
            sizeof(bus_peer)); // Clear peer structure
-    memcpy(bus_peer.peer_addr, busMAC,
+    memcpy(bus_peer.peer_addr, g_arrBusMAC,
            6);                // Set peer MAC address
     bus_peer.channel = 4;     // Use default channel
     bus_peer.encrypt = false; // No encryption
@@ -444,10 +450,10 @@ void setup()
     P.begin();
     P.setIntensity(1); // keep it 3 or below as we are
                        // powering off the chip/usb
-    P.displayText(Buffer, PA_CENTER, 0, 0, PA_PRINT,
+    P.displayText(g_strBuffer, PA_CENTER, 0, 0, PA_PRINT,
                   PA_NO_EFFECT);
 
-    dwTimeLast = millis();
+    g_dwTimeLast = millis();
 }
 
 /**
@@ -460,9 +466,9 @@ void scroll()
 {
     if (P.displayAnimate())
     {
-        P.displayText(newMessage, scrollAlign, scrollSpeed,
-                      scrollPause, scrollEffect,
-                      scrollEffect);
+        P.displayText(g_strNewMessage, g_eScrollAlign,
+                      g_iScrollSpeed, g_iScrollPause,
+                      g_eScrollEffect, g_eScrollEffect);
         P.displayReset();
     }
 }
@@ -477,14 +483,14 @@ void scroll()
  */
 void loop()
 {
-    if (button == true)
+    if (g_bButton == true)
     { // If the boot button is pressed
         Message msg;
         msg.buttonPressed = true;
-        esp_err_t result = esp_now_send(
-            busMAC, (uint8_t *)&msg, sizeof(msg));
+        esp_err_t eResult = esp_now_send(
+            g_arrBusMAC, (uint8_t *)&msg, sizeof(msg));
 
-        if (result == ESP_OK)
+        if (eResult == ESP_OK)
         {
             Serial.println("Sent with success");
         }
@@ -493,27 +499,27 @@ void loop()
             Serial.println("Error sending the data");
         }
         delay(100); // Debounce delay
-        button = false;
+        g_bButton = false;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////
 
-    if (!halt)
+    if (!g_bHalt)
     {
-        nShowTime = UpdateEstimated();
+        g_iShowTime = UpdateEstimated();
 
-        Serial.println(nShowTime);
+        Serial.println(g_iShowTime);
         if (P.displayAnimate())
         {
-            int s = (nShowTime / 60) + 1;
-            sprintf(
-                Buffer, "%01d",
-                nShowTime); // the number "1" is the number
-                            // of digits that you want
-                            // always shown on the screen
-                            // for this font we can have 5
-            P.displayText(Buffer, PA_CENTER, 0, 0, PA_PRINT,
-                          PA_NO_EFFECT);
+            int s = (g_iShowTime / 60) + 1;
+            sprintf(g_strBuffer, "%01d",
+                    g_iShowTime); // the number "1" is the
+                                  // number of digits that
+                                  // you want always shown
+                                  // on the screen for this
+                                  // font we can have 5
+            P.displayText(g_strBuffer, PA_CENTER, 0, 0,
+                          PA_PRINT, PA_NO_EFFECT);
         }
 
         delay(1000);
@@ -521,14 +527,14 @@ void loop()
 
     else
     {
-        if (nHalt == 0)
+        if (g_iHalt == 0)
         {
             Serial.println("BUS HALTED IN BETWEEN");
-            nHalt = 1;
+            g_iHalt = 1;
         }
-        if (!service)
+        if (!g_bService)
         {
-            if (nService == 0)
+            if (g_iService == 0)
             {
                 Serial.println("BUS OUT OF SERVICE");
                 if (P.displayAnimate())
@@ -539,7 +545,7 @@ void loop()
                     P.displayReset();
                 }
 
-                nService = 1;
+                g_iService = 1;
             }
         }
     }

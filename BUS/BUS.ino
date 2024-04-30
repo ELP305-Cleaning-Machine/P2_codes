@@ -63,22 +63,21 @@ typedef struct tagMESSAGE
     int iDirection;
 } MESSAGE;
 // Create a struct_message called myData
-struct_message
-    myData; ///< Instance of struct_message to hold data.
+MESSAGE g_myData; ///< Instance of MESSAGE to hold data.
 
-const int ledPin = 2; ///< Pin number for the LED.
+const int g_iLedPin = 2; ///< Pin number for the LED.
 
 /**
- * @struct Message
+ * @struct tagMESSAGE_RECV
  * @brief Structure to receive data.
  *
- * @var Message::buttonPressed
+ * @var tagMESSAGE_RECV::bButtonPressed
  * @brief Flag to indicate if the button is pressed.
  */
 typedef struct
 {
-    bool buttonPressed;
-} Message;
+    bool bButtonPressed;
+} MESSAGE_RECV;
 
 /**
  * @brief Callback function that is executed when data is
@@ -87,18 +86,18 @@ typedef struct
  * This function handles the incoming data and sets the
  * passenger flag to true if a message is received.
  *
- * @param mac The MAC address of the sender.
- * @param incomingData The incoming data.
- * @param len The length of the incoming data.
+ * @param pucMac The MAC address of the sender.
+ * @param pucIncomingData The incoming data.
+ * @param iLen The length of the incoming data.
  */
-void onDataRecv(const uint8_t *mac,
-                const uint8_t *incomingData, int len)
+void onDataRecv(const uint8_t *pucMac,
+                const uint8_t *pucIncomingData, int iLen)
 {
-    Message msg;
-    memcpy(&msg, incomingData, sizeof(msg));
+    MESSAGE_RECV msgRecv;
+    memcpy(&msgRecv, pucIncomingData, sizeof(msgRecv));
     Serial.println("passengers waiting");
 
-    passenger = true;
+    g_bPassengerFlag = true;
 }
 ////////////////////////////////////////////
 /**
@@ -107,21 +106,21 @@ void onDataRecv(const uint8_t *mac,
  * This function sends a service message (either "BUS OOS"
  * or "BUS NOOS") to the bus stops.
  *
- * @param i The index of the message to be sent.
+ * @param iIndex The index of the message to be sent.
  */
-void send_data_service(int i)
+void send_data_service(int iIndex)
 {
-    if (i == 0)
+    if (iIndex == 0)
     {
-        myData.a = "BUS OOS";
-        myData.nBusIndex = 1;
-        myData.nBusStop = 0;
-        myData.nDirection = 0;
-        esp_err_t result = esp_now_send(broadcastAddress[0],
-                                        (uint8_t *)&myData,
-                                        sizeof(myData));
+        g_myData.strMessage = "BUS OOS";
+        g_myData.iBusIndex = 1;
+        g_myData.iBusStopIndex = 0;
+        g_myData.iDirection = 0;
+        esp_err_t eResult = esp_now_send(
+            g_arrBroadcastAddress[0], (uint8_t *)&g_myData,
+            sizeof(g_myData));
 
-        if (result == ESP_OK)
+        if (eResult == ESP_OK)
         {
             Serial.println("Sent with success");
         }
@@ -130,11 +129,11 @@ void send_data_service(int i)
             Serial.println("Error sending the data");
         }
 
-        result = esp_now_send(broadcastAddress[1],
-                              (uint8_t *)&myData,
-                              sizeof(myData));
+        eResult = esp_now_send(g_arrBroadcastAddress[1],
+                               (uint8_t *)&g_myData,
+                               sizeof(g_myData));
 
-        if (result == ESP_OK)
+        if (eResult == ESP_OK)
         {
             Serial.println("Sent with success");
         }
@@ -146,15 +145,15 @@ void send_data_service(int i)
 
     else
     {
-        myData.a = "BUS NOOS";
-        myData.nBusIndex = 1;
-        myData.nBusStop = 0;
-        myData.nDirection = 0;
-        esp_err_t result = esp_now_send(broadcastAddress[0],
-                                        (uint8_t *)&myData,
-                                        sizeof(myData));
+        g_myData.strMessage = "BUS NOOS";
+        g_myData.iBusIndex = 1;
+        g_myData.iBusStopIndex = 0;
+        g_myData.iDirection = 0;
+        esp_err_t eResult = esp_now_send(
+            g_arrBroadcastAddress[0], (uint8_t *)&g_myData,
+            sizeof(g_myData));
 
-        if (result == ESP_OK)
+        if (eResult == ESP_OK)
         {
             Serial.println("Sent with success");
         }
@@ -163,11 +162,11 @@ void send_data_service(int i)
             Serial.println("Error sending the data");
         }
 
-        result = esp_now_send(broadcastAddress[1],
-                              (uint8_t *)&myData,
-                              sizeof(myData));
+        eResult = esp_now_send(g_arrBroadcastAddress[1],
+                               (uint8_t *)&g_myData,
+                               sizeof(g_myData));
 
-        if (result == ESP_OK)
+        if (eResult == ESP_OK)
         {
             Serial.println("Sent with success");
         }
@@ -177,17 +176,16 @@ void send_data_service(int i)
         }
     }
 }
-
 /**
  * @brief Interrupt service routine for handling button
  * press.
  *
  * This function is called when an interrupt is triggered.
- * It toggles the buttonPressed flag.
+ * It toggles the g_bButtonPressed flag.
  */
 void IRAM_ATTR handleInterrupt()
 {
-    buttonPressed = !buttonPressed;
+    g_bButtonPressed = !g_bButtonPressed;
 }
 
 /**
@@ -198,24 +196,23 @@ void IRAM_ATTR handleInterrupt()
  * It prints "Delivery Success" if the packet was sent
  * successfully, otherwise it prints "Delivery Fail".
  *
- * @param mac_addr The MAC address of the receiver.
- * @param status The status of the send operation.
+ * @param pucMacAddr The MAC address of the receiver.
+ * @param eStatus The status of the send operation.
  */
-void OnDataSent(const uint8_t *mac_addr,
-                esp_now_send_status_t status)
+void OnDataSent(const uint8_t *pucMacAddr,
+                esp_now_send_status_t eStatus)
 {
     Serial.print("\r\nLast Packet Send Status:\t");
-    Serial.println(status == ESP_NOW_SEND_SUCCESS
+    Serial.println(eStatus == ESP_NOW_SEND_SUCCESS
                        ? "Delivery Success"
                        : "Delivery Fail");
-    if (status == ESP_NOW_SEND_SUCCESS)
+    if (eStatus == ESP_NOW_SEND_SUCCESS)
     {
     }
     else
     {
     }
 }
-
 /**
  * @brief Setup function for the Arduino sketch.
  *
@@ -233,14 +230,14 @@ void setup(void)
     while (!Serial)
         delay(10); // Wait for serial port to connect
 
-    pinMode(buttonPin, INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(buttonPin),
+    pinMode(g_iButtonPin, INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(g_iButtonPin),
                     handleInterrupt, FALLING);
     Serial.println(
         "Adafruit MPU6050 test!"); // Print a message to
                                    // serial monitor
 
-    if (!mpu.begin())
+    if (!g_mpuSensor.begin())
     { // Try to initialize MPU6050 sensor
         Serial.println("Failed to find MPU6050 chip");
         while (1)
@@ -252,22 +249,22 @@ void setup(void)
         "MPU6050 Found!"); // Print a message indicating
                            // MPU6050 is found
 
-    mpu.setAccelerometerRange(
+    g_mpuSensor.setAccelerometerRange(
         MPU6050_RANGE_8_G); // Set accelerometer range to
                             // +/- 8G
     Serial.print("Accelerometer range set to: ");
-    switch (mpu.getAccelerometerRange())
+    switch (g_mpuSensor.getAccelerometerRange())
     {
     case MPU6050_RANGE_8_G:
         Serial.println("+-8G");
         break;
     }
 
-    mpu.setFilterBandwidth(
+    g_mpuSensor.setFilterBandwidth(
         MPU6050_BAND_21_HZ); // Set filter bandwidth to 21
                              // Hz
     Serial.print("Filter bandwidth set to: ");
-    switch (mpu.getFilterBandwidth())
+    switch (g_mpuSensor.getFilterBandwidth())
     {
     case MPU6050_BAND_21_HZ:
         Serial.println("21 Hz");
@@ -291,19 +288,21 @@ void setup(void)
     // for Send CB to get the status of Trasnmitted packet
     esp_now_register_send_cb(OnDataSent);
 
-    memcpy(peerInfo_1.peer_addr, broadcastAddress[0], 6);
-    peerInfo_1.channel = 4;
-    peerInfo_1.encrypt = false;
-    if (esp_now_add_peer(&peerInfo_1) != ESP_OK)
+    memcpy(g_peerInfoFirst.peer_addr,
+           g_arrBroadcastAddress[0], 6);
+    g_peerInfoFirst.channel = 4;
+    g_peerInfoFirst.encrypt = false;
+    if (esp_now_add_peer(&g_peerInfoFirst) != ESP_OK)
     {
         Serial.println("Failed to add peer");
         return;
     }
 
-    memcpy(peerInfo_2.peer_addr, broadcastAddress[1], 6);
-    peerInfo_2.channel = 4;
-    peerInfo_2.encrypt = false;
-    if (esp_now_add_peer(&peerInfo_2) != ESP_OK)
+    memcpy(g_peerInfoSecond.peer_addr,
+           g_arrBroadcastAddress[1], 6);
+    g_peerInfoSecond.channel = 4;
+    g_peerInfoSecond.encrypt = false;
+    if (esp_now_add_peer(&g_peerInfoSecond) != ESP_OK)
     {
         Serial.println("Failed to add peer");
         return;
@@ -312,39 +311,39 @@ void setup(void)
     /////////////////////////////////////////////////////
     esp_now_register_recv_cb(onDataRecv);
 
-    pinMode(ledPin, OUTPUT);   // Set LED pin as output
-    digitalWrite(ledPin, LOW); // Start with LED off
+    pinMode(g_iLedPin, OUTPUT);   // Set LED pin as output
+    digitalWrite(g_iLedPin, LOW); // Start with LED off
     /////////////////////////////////////////////////////
 }
-
 /**
  * @brief Gets the RSSI value for a specific bus stop.
  *
  * This function scans the networks and returns the RSSI
  * value for a specific bus stop.
  *
- * @param j The index of the bus stop.
+ * @param iBusStopIndex The index of the bus stop.
  * @return The RSSI value. Returns 0 if the RSSI is greater
  * than or equal to -50, 2 if the SSID matches the bus
  * stop, and 1 otherwise.
  */
-int get_rssi(int j)
+int get_rssi(int iBusStopIndex)
 {
     Serial.println("scan start");
 
     // WiFi.scanNetworks will return the number of networks
     // found
-    int n = WiFi.scanNetworks(false, false, false, 50, 4);
+    int iNetworkCount =
+        WiFi.scanNetworks(false, false, false, 50, 4);
     Serial.println("scan done");
-    if (n == 0)
+    if (iNetworkCount == 0)
     {
         Serial.println("no networks found");
     }
     else
     {
-        Serial.print(n);
+        Serial.print(iNetworkCount);
         Serial.println(" networks found");
-        for (int i = 0; i < n; ++i)
+        for (int i = 0; i < iNetworkCount; ++i)
         {
             // Print SSID and RSSI for each network found
             Serial.print(i + 1);
@@ -358,15 +357,15 @@ int get_rssi(int j)
                     ? " "
                     : "*");
 
-            if (WiFi.SSID(i) == ssid[j])
+            if (WiFi.SSID(i) == g_arrSSID[iBusStopIndex])
             {
                 Serial.println(WiFi.RSSI(i));
                 if (WiFi.RSSI(i) >= -50)
                 {
-                    // esp_err_t result =
-                    // esp_now_send(broadcastAddress,
-                    // (uint8_t *) &myData,
-                    // sizeof(myData));
+                    // esp_err_t eResult =
+                    // esp_now_send(g_arrBroadcastAddress,
+                    // (uint8_t *) &g_myData,
+                    // sizeof(g_myData));
                     return (0);
                 }
                 return (2);
@@ -376,8 +375,8 @@ int get_rssi(int j)
     }
     Serial.println("");
 }
-int avg_sample = 0;
-int arr[10];
+int g_iAvgSample = 0;
+int g_arrSamples[10];
 
 /**
  * @brief Sends a data message to the bus stops.
@@ -385,25 +384,25 @@ int arr[10];
  * This function sends a data message (either "BUS
  * STOPPED!" or "BUS STARTED!") to the bus stops.
  *
- * @param i The index of the message to be sent. If i is 0,
- * "BUS STOPPED!" is sent. Otherwise, "BUS STARTED!" is
- * sent.
- * @param v The index of the bus stop to send the message
- * to.
+ * @param iMessageIndex The index of the message to be sent.
+ * If iMessageIndex is 0, "BUS STOPPED!" is sent. Otherwise,
+ * "BUS STARTED!" is sent.
+ * @param iBusStopIndex The index of the bus stop to send
+ * the message to.
  */
-void send_data(int i, int v)
+void send_data(int iMessageIndex, int iBusStopIndex)
 {
-    if (i == 0)
+    if (iMessageIndex == 0)
     {
-        myData.a = "BUS STOPPED!";
-        myData.nBusIndex = 1;
-        myData.nBusStop = 0;
-        myData.nDirection = 0;
-        esp_err_t result = esp_now_send(broadcastAddress[v],
-                                        (uint8_t *)&myData,
-                                        sizeof(myData));
+        g_myData.strMessage = "BUS STOPPED!";
+        g_myData.iBusIndex = 1;
+        g_myData.iBusStopIndex = 0;
+        g_myData.iDirection = 0;
+        esp_err_t eResult = esp_now_send(
+            g_arrBroadcastAddress[iBusStopIndex],
+            (uint8_t *)&g_myData, sizeof(g_myData));
 
-        if (result == ESP_OK)
+        if (eResult == ESP_OK)
         {
             Serial.println("Sent with success");
         }
@@ -414,15 +413,15 @@ void send_data(int i, int v)
     }
     else
     {
-        myData.a = "BUS STARTED!";
-        myData.nBusIndex = 1;
-        myData.nBusStop = 0;
-        myData.nDirection = 0;
-        esp_err_t result = esp_now_send(broadcastAddress[v],
-                                        (uint8_t *)&myData,
-                                        sizeof(myData));
+        g_myData.strMessage = "BUS STARTED!";
+        g_myData.iBusIndex = 1;
+        g_myData.iBusStopIndex = 0;
+        g_myData.iDirection = 0;
+        esp_err_t eResult = esp_now_send(
+            g_arrBroadcastAddress[iBusStopIndex],
+            (uint8_t *)&g_myData, sizeof(g_myData));
 
-        if (result == ESP_OK)
+        if (eResult == ESP_OK)
         {
             Serial.println("Sent with success");
         }
@@ -432,31 +431,31 @@ void send_data(int i, int v)
         }
     }
 }
-
 /**
  * @brief Sends a halt message to the bus stops.
  *
  * This function sends a halt message (either "BUS HALTED"
  * or "BUS MOVING") to the bus stops.
  *
- * @param i The index of the message to be sent. If i is 0,
- * "BUS HALTED" is sent. Otherwise, "BUS MOVING" is sent.
- * @param v The index of the bus stop to send the message
- * to.
+ * @param iMessageIndex The index of the message to be sent.
+ * If iMessageIndex is 0, "BUS HALTED" is sent. Otherwise,
+ * "BUS MOVING" is sent.
+ * @param iBusStopIndex The index of the bus stop to send
+ * the message to.
  */
-void send_data_halt(int i, int v)
+void send_data_halt(int iMessageIndex, int iBusStopIndex)
 {
-    if (i == 0)
+    if (iMessageIndex == 0)
     {
-        myData.a = "BUS HALTED";
-        myData.nBusIndex = 1;
-        myData.nBusStop = 0;
-        myData.nDirection = 0;
-        esp_err_t result = esp_now_send(broadcastAddress[v],
-                                        (uint8_t *)&myData,
-                                        sizeof(myData));
+        g_myData.strMessage = "BUS HALTED";
+        g_myData.iBusIndex = 1;
+        g_myData.iBusStopIndex = 0;
+        g_myData.iDirection = 0;
+        esp_err_t eResult = esp_now_send(
+            g_arrBroadcastAddress[iBusStopIndex],
+            (uint8_t *)&g_myData, sizeof(g_myData));
 
-        if (result == ESP_OK)
+        if (eResult == ESP_OK)
         {
             Serial.println("Sent with success");
         }
@@ -467,15 +466,15 @@ void send_data_halt(int i, int v)
     }
     else
     {
-        myData.a = "BUS MOVING";
-        myData.nBusIndex = 1;
-        myData.nBusStop = 0;
-        myData.nDirection = 0;
-        esp_err_t result = esp_now_send(broadcastAddress[v],
-                                        (uint8_t *)&myData,
-                                        sizeof(myData));
+        g_myData.strMessage = "BUS MOVING";
+        g_myData.iBusIndex = 1;
+        g_myData.iBusStopIndex = 0;
+        g_myData.iDirection = 0;
+        esp_err_t eResult = esp_now_send(
+            g_arrBroadcastAddress[iBusStopIndex],
+            (uint8_t *)&g_myData, sizeof(g_myData));
 
-        if (result == ESP_OK)
+        if (eResult == ESP_OK)
         {
             Serial.println("Sent with success");
         }
@@ -485,7 +484,6 @@ void send_data_halt(int i, int v)
         }
     }
 }
-
 /**
  * @brief Main loop function for the Arduino sketch.
  *
@@ -504,168 +502,141 @@ void loop()
 {
     /* Get new sensor events with the readings */
 
-    if (buttonPressed)
+    if (g_bButtonPressed)
     {
-        if (hope == 0)
+        if (g_iHopeFlag == 0)
         {
             Serial.println("BUS OUT OF SERVICE!");
             send_data_service(0);
-            nOOS = 1;
+            g_iOOSFlag = 1;
         }
-        hope = 1;
-        /*while(buttonPressed){
-          if(!buttonPressed){
-            Serial.println("CONTINUING SERVICE");
-            send_data_service(1);
-          }
-        }*/
+        g_iHopeFlag = 1;
     }
-    if (nOOS == 1 && !buttonPressed)
+    if (g_iOOSFlag == 1 && !g_bButtonPressed)
     {
         Serial.println("CONTINUING SERVICE");
         send_data_service(1);
-        nOOS = 0;
-        hope = 0;
+        g_iOOSFlag = 0;
+        g_iHopeFlag = 0;
     }
 
-    if (passenger)
+    if (g_bPassengerFlag)
     {
         Serial.println("Received signal, turning on LED");
         for (int i = 0; i < 2; i++)
         {
-            digitalWrite(ledPin, HIGH); // Turn on LED
+            digitalWrite(g_iLedPin, HIGH); // Turn on LED
             delay(250);
-            digitalWrite(ledPin, LOW);
+            digitalWrite(g_iLedPin, LOW);
             delay(250);
         }
-        passenger = false;
+        g_bPassengerFlag = false;
     }
 
-    if (avg_sample == 10)
+    if (g_iAvgSample == 10)
     {
-        int s = 0;
+        int iSum = 0;
         for (int j = 0; j < 10; j++)
         {
-            s = s + arr[j];
+            iSum = iSum + g_arrSamples[j];
         }
-        avg_sample = 0;
-        if (s >= 7)
+        g_iAvgSample = 0;
+        if (iSum >= 7)
         {
             Serial.println("Bus Moving");
-            if (latch == 1)
+            if (g_iLatchFlag == 1)
             {
-                if (halt == 0)
+                if (g_iHaltFlag == 0)
                 {
-                    send_data(1, vertex % 2);
-                    latch = 0;
-                    vertex++;
+                    send_data(1, g_iVertex % 2);
+                    g_iLatchFlag = 0;
+                    g_iVertex++;
                 }
                 else
                 {
-                    send_data_halt(1, vertex % 2);
-                    send_data_halt(1, (vertex + 1) % 2);
-                    latch = 0;
-                    halt = 0;
+                    send_data_halt(1, g_iVertex % 2);
+                    send_data_halt(1, (g_iVertex + 1) % 2);
+                    g_iLatchFlag = 0;
+                    g_iHaltFlag = 0;
                 }
             }
         }
         else
         {
             Serial.println("Bus stopped");
-            int t = get_rssi(vertex % 2);
-            int x = get_rssi((vertex + 1) % 2);
-            if (t == 0 && latch == 0)
+            int iRSSI1 = get_rssi(g_iVertex % 2);
+            int iRSSI2 = get_rssi((g_iVertex + 1) % 2);
+            if (iRSSI1 == 0 && g_iLatchFlag == 0)
             {
                 Serial.println("bus arrived at");
-                Serial.println(ssid[vertex % 2]);
-                send_data(0, vertex % 2);
-                latch = 1;
-                /*esp_err_t result =
-                esp_now_send(broadcastAddress, (uint8_t *)
-                &myData, sizeof(myData));
-
-                if (result == ESP_OK) {
-                Serial.println("Sent with success");
-                }
-                else {
-                Serial.println("Error sending the data");
-                }
-                */
+                Serial.println(g_arrSSID[g_iVertex % 2]);
+                send_data(0, g_iVertex % 2);
+                g_iLatchFlag = 1;
             }
-            else if ((t == 2 || x == 2) && latch == 0)
+            else if ((iRSSI1 == 2 || iRSSI2 == 2) &&
+                     g_iLatchFlag == 0)
             {
-                send_data_halt(0, vertex % 2);
-                send_data_halt(0, (vertex + 1) % 2);
-                latch = 1;
-                halt = 1;
-            }
-            else
-            {
-                // Do nothin
+                send_data_halt(0, g_iVertex % 2);
+                send_data_halt(0, (g_iVertex + 1) % 2);
+                g_iLatchFlag = 1;
+                g_iHaltFlag = 1;
             }
         }
     }
 
     sensors_event_t a, g, temp;
-    mpu.getEvent(&a, &g, &temp);
-    int flag[5]; // Array to store motion detection flags
-    double net;
+    g_mpuSensor.getEvent(&a, &g, &temp);
+    int arrFlags[5]; // Array to store motion detection
+                     // flags
+    double dNet;
     // Loop to check motion for 10 iterations
     for (int i = 0; i < 5; i++)
     {
-        double a_x =
+        double dAx =
             a.acceleration.x; // Acceleration along x-axis
-        double a_y =
+        double dAy =
             a.acceleration.y; // Acceleration along y-axis
-        double a_z =
+        double dAz =
             a.acceleration.z; // Acceleration along z-axis
-        net =
-            sqrt((a_x * a_x) + (a_y * a_y) +
-                 (a_z * a_z)); // Calculate net acceleration
+        dNet =
+            sqrt((dAx * dAx) + (dAy * dAy) +
+                 (dAz * dAz)); // Calculate net acceleration
 
         // Check if net acceleration falls within a certain
         // range from the offset (acceleration when bus is
         // stopped)
-        if (net > 9.4 and net < 10.3)
+        if (dNet > 9.4 and dNet < 10.3)
         {
-            // Serial.println("bs");              // Print
-            // motion status as "bs=Bus stopped"
-            // Serial.print(a.acceleration.x);
-            flag[i] =
+            arrFlags[i] =
                 0; // Set flag to 0 indicating bus stopped
         }
         else
         {
-            // Serial.println("bm");              // Print
-            // motion status as "bm=Bus moving"
-            // Serial.print(a.acceleration.x);
-            flag[i] =
+            arrFlags[i] =
                 1; // Set flag to 1 indicating bus moving
         }
-        delay(100); // Delay betrween iterations for
-                    // stability
+        delay(
+            100); // Delay betrween iterations for stability
     }
-    int sum = 0;
+    int iSum = 0;
     // Calculate sum of motion detection flags
     for (int i = 0; i < 5; i++)
     {
-        sum = sum + flag[i];
+        iSum = iSum + arrFlags[i];
     }
     // Check if sum indicates bus stopped or moving
-    if (sum == 0)
+    if (iSum == 0)
     {
         Serial.println(
             "BS"); // Print message indicating bus stopped
-        // Serial.print(net);
-        arr[avg_sample] = 0;
+        g_arrSamples[g_iAvgSample] = 0;
     }
     else
     {
-        Serial.println("BM"); // Print message indicating
-                              // bus is moving
-        // Serial.print(net);
-        arr[avg_sample] = 1;
+        Serial.println(
+            "BM"); // Print message indicating bus is moving
+        g_arrSamples[g_iAvgSample] = 1;
     }
-    avg_sample = avg_sample + 1;
+    g_iAvgSample = g_iAvgSample + 1;
     Serial.println(""); // Print empty line for readability
 }

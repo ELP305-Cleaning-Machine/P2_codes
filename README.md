@@ -29,6 +29,6 @@ The codes used during the demo of project-2 can be found [here](https://github.c
 - Hungarian Notations are used in the codes
 - Comments are mostly Doxygen compliant
 - Doxygen HTML files are available [here](html_output/html/index.html)
-- All code has been beautified as per [Clang](P2_codes/.clang-format) format
+- All code has been beautified as per [Clang](.clang-format) format
 
 For further assistance, please refer to the full project repo [here](https://github.com/ELP305-Cleaning-Machine/Documentation_P2).

@@ -1,7 +1,5 @@
 # README
 
-
-
 ## Introduction
 
 Welcome to our innovative bus tracking system designed to enhance the Bus transportation experience in IIT Delhi. Our system utilizes ESP32 technology to provide real-time updates and improve service reliability. Commuters at each stop are informed via a display unit, which indicates the **anticipated arrival time** of the next bus. Our system comprises two integral components: **units installed on the buses** and **display units at the stops**
@@ -30,6 +28,7 @@ The codes used during the demo of project-2 can be found [here](https://github.c
 - BUS STOP B's code is [BusStopB.ino](BusStopB/BusStopB.ino)
 - Hungarian Notations are used in the codes
 - Comments are mostly Doxygen compliant
-- Doxygen HTML files are available [here](htmloutput/html/index.html)
+- Doxygen HTML files are available [here](html_output/html/index.html)
+- All code has been beautified as per [Clang](P2_codes\.clang-format) format
 
-For further assistance, please refer to the full project report [here](https://2nav.github.io/TribeC/).
+For further assistance, please refer to the full project repo [here](https://github.com/ELP305-Cleaning-Machine/Documentation_P2).

@@ -1,35 +1,35 @@
-/**@file BusStopA.ino*/
+```cpp
 #include <MD_MAX72xx.h>
 #include <MD_Parola.h>
 #include <SPI.h>
 #include <WiFi.h>
 #include <esp_now.h>
-////////////////////
-#define MAX_DEVICES 2
-#define CLK_PIN 18  // or SCK
-#define DATA_PIN 23 // or MOSI
-#define CS_PIN 5    // or SS
 
-// Change this to work with your matrix - see video 1 you
-// have 4 choices
+////////////////////
+#define MAX_DEVICES 2 ///< The maximum number of devices.
+
+#define CLK_PIN 18  ///< The pin for the clock signal.
+#define DATA_PIN 23 ///< The pin for the data signal.
+#define CS_PIN 5    ///< The pin for the chip select signal.
+
 #define HARDWARE_TYPE                                      \
     MD_MAX72XX::PAROLA_HW ///< The type of hardware being
                           ///< used.
 
-MD_Parola g_P = MD_Parola(
+MD_Parola P = MD_Parola(
     HARDWARE_TYPE, DATA_PIN, CLK_PIN, CS_PIN,
     MAX_DEVICES); ///< Instance of the MD_Parola class.
 int g_iStop = 0;  ///< Stop variable.
 
 uint8_t g_uiScrollSpeed = 25; ///< The speed of the scroll.
-textEffect_t g_scrollEffect =
+textEffect_t g_eScrollEffect =
     PA_SCROLL_LEFT; ///< The effect of the scroll.
-textPosition_t g_scrollAlign =
+textPosition_t g_eScrollAlign =
     PA_LEFT; ///< The alignment of the scroll.
 uint16_t g_uiScrollPause =
     200; ///< The pause time of the scroll in milliseconds.
-
 #define BUF_SIZE 75 ///< The size of the buffer.
+
 char g_szCurMessage[BUF_SIZE] = {
     ""}; ///< The current message.
 char g_szNewMessage[BUF_SIZE] = {
@@ -38,7 +38,7 @@ bool g_bNewMessageAvailable =
     true; ///< Flag to check if a new message is available.
 char g_szBuffer[3] = " "; ///< Buffer to hold the numbers.
 
-uint8_t g_uiBroadcastAddress[] = {
+uint8_t g_auiBroadcastAddress[] = {
     0xEC, 0x64, 0xC9,
     0x86, 0x13, 0xC0}; ///< The broadcast address.
 
@@ -46,34 +46,41 @@ int g_iFlag = 0;            ///< Flag variable.
 unsigned long g_ulTime;     ///< Time variable.
 unsigned long g_ulTimeLast; ///< Last time variable.
 bool g_bService = true;     ///< Service flag.
-int g_iNHalt = 0;           ///< Halt variable.
-int g_iNService = 0;        ///< Service variable.
+int g_iHalt = 0;            ///< Halt variable.
+int g_iService = 0;         ///< Service variable.
 int g_iInitial = 0;         ///< Initial variable.
 
-int g_iNStopID = 2; ///< Unique ID of the operating stop.
-const int g_iNBusNum = 1;      ///< Total number of buses.
-const int g_iNStopNum = 2;     ///< Total number of stops.
-int g_rgEstimated[g_iNBusNum]; ///< Array to store estimated
-                               ///< times in seconds.
-int g_rgScheduled[g_iNStopNum][g_iNStopNum] = {
+int g_iStopID = 2; ///< Unique ID of the operating stop.
+const int g_iBusNum = 1;      ///< Total number of buses.
+const int g_iStopNum = 2;     ///< Total number of stops.
+int g_aiEstimated[g_iBusNum]; ///< Array to store estimated
+                              ///< times in seconds.
+int g_aiScheduled[g_iStopNum][g_iStopNum] = {
     {100, 50}, {50, 100}}; ///< 2D array to store scheduled
                            ///< times in seconds.
 
 esp_now_peer_info_t g_peerInfo; ///< Peer information.
 
 bool g_bHalt = false; ///< Halt flag.
-int g_iNShowTime = 0; ///< Show time variable.
+int g_iShowTime = 0;  ///< Show time variable.
 
-uint8_t g_uiBusMAC[] = {
+uint8_t g_auiBusMAC[] = {
     0xE8, 0x6B, 0xEA, 0xD4,
     0x27, 0x7C}; ///< MAC address of the receiver (bus).
 
+/**
+ * @struct Message
+ * @brief Structure to send data.
+ *
+ * @var Message::buttonPressed
+ * @brief Button pressed flag.
+ */
 typedef struct
 {
-    bool buttonPressed; ///< Button pressed flag.
-} Message;              ///< Structure to send data.
+    bool buttonPressed;
+} Message;
 volatile bool g_bButton =
-    false; ///< Flag to indicate if the button is pressed
+    false; ///< Flag to indicate if the button is pressed.
 
 /**
  * @brief Interrupt service routine for handling button
@@ -91,7 +98,6 @@ void IRAM_ATTR handleInterrupt()
 }
 
 int g_iButtonPin = 0; ///< The pin connected to the button.
-
 //////////////////////////////////////
 
 // void UpdateInterrupt(int nBusIndex,int nStopIndex);
@@ -110,12 +116,13 @@ int g_iButtonPin = 0; ///< The pin connected to the button.
  * data is sent successfully, otherwise it prints an error
  * message.
  */
-void send_data(const uint8_t *peer_addr,
-               const uint8_t *data, size_t len)
+void send_data(const uint8_t *pucPeerAddr,
+               const uint8_t *pucData, size_t uiLen)
 {
-    esp_err_t result = esp_now_send(peer_addr, data, len);
+    esp_err_t eResult =
+        esp_now_send(pucPeerAddr, pucData, uiLen);
 
-    if (result == ESP_OK)
+    if (eResult == ESP_OK)
     {
         Serial.println("Sent with success");
     }
@@ -132,14 +139,17 @@ void send_data(const uint8_t *peer_addr,
  * @param nBusIndex The index of the bus.
  * @param nBusStop The index of the bus stop.
  * @param nStopID The ID of the stop.
+ *
+ * This function updates the scheduled times for the given
+ * bus when an interrupt occurs.
  */
-void UpdateInterrupt(int nBusIndex, int nBusStop,
-                     int nStopID)
+void UpdateInterrupt(int iBusIndex, int iBusStop,
+                     int iStopID)
 {
     // On Interrupt update the scheduled times for the given
     // bus
-    g_rgEstimated[nBusIndex] =
-        g_rgScheduled[nBusStop][nStopID];
+    g_aiEstimated[iBusIndex] =
+        g_aiScheduled[iBusStop][iStopID];
 }
 
 /**
@@ -147,22 +157,26 @@ void UpdateInterrupt(int nBusIndex, int nBusStop,
  * buses and returns the minimum.
  *
  * @return The minimum estimated time of arrival.
+ *
+ * This function decrements the estimated times and takes
+ * the minimum.
  */
 int UpdateEstimated()
 {
     // Decrementing the times and taking minm
-    for (int nBusID = 0; nBusID < g_iNBusNum; nBusID++)
+    for (int iBusID = 0; iBusID < g_iBusNum; iBusID++)
     {
-        g_rgEstimated[nBusID] =
-            max(0, g_rgEstimated[nBusID] - 1);
+        g_aiEstimated[iBusID] =
+            max(0, g_aiEstimated[iBusID] - 1);
     }
-    int nMinm = g_rgEstimated[0];
-    for (int nBusID = 0; nBusID < g_iNBusNum; nBusID++)
+    int iMinm = g_aiEstimated[0];
+    for (int iBusID = 0; iBusID < g_iBusNum; iBusID++)
     {
-        nMinm = min(nMinm, g_rgEstimated[nBusID]);
+        iMinm = min(iMinm, g_aiEstimated[iBusID]);
     }
-    return nMinm;
+    return iMinm;
 }
+
 /**
  * @struct struct_message
  * @brief Structure for sending and receiving data.
@@ -175,20 +189,22 @@ int UpdateEstimated()
  * @brief The index of the bus.
  * @var struct_message::nDirection
  * @brief The direction of the bus.
+ *
+ * This structure must match the sender structure.
  */
 typedef struct struct_message
 {
-    String a;
-    int nBusStop;
-    int nBusIndex;
-    int nDirection;
+    String strMessage;
+    int iBusStop;
+    int iBusIndex;
+    int iDirection;
 } struct_message;
+// Create a struct_message called myData
 
-struct_message g_Send_Data;    ///< Data to send.
-struct_message g_Recieve_Data; ///< Data received.
+struct_message g_SendData;    ///< Data to send.
+struct_message g_RecieveData; ///< Data received.
 // callback function that will be executed when data is
 // received
-
 /**
  * @brief Callback function that is executed when data is
  * received.
@@ -198,9 +214,9 @@ struct_message g_Recieve_Data; ///< Data received.
  * updates the status of the bus (halted, moving, out of
  * service, etc.) and the estimated time of arrival.
  *
- * @param pucMac The MAC address of the sender.
- * @param pucIncomingData The incoming data.
- * @param iLen The length of the incoming data.
+ * @param mac The MAC address of the sender.
+ * @param incomingData The incoming data.
+ * @param len The length of the incoming data.
  */
 void OnDataRecv(const uint8_t *pucMac,
                 const uint8_t *pucIncomingData, int iLen)
@@ -266,19 +282,19 @@ void OnDataRecv(const uint8_t *pucMac,
             g_SendData.iBusIndex = g_RecieveData.iBusIndex;
             g_SendData.iDirection =
                 g_RecieveData.iDirection;
-            // g_SendData.from_where=0;
+            // Send_Data.from_where=0;
             UpdateInterrupt(g_RecieveData.iBusIndex - 1,
                             g_iStopID - 1, g_iStopID - 1);
             // flag = 1;
             delay(1000);
-            send_data(g_arrBroadcastAddress,
+            send_data(g_auiBroadcastAddress,
                       (uint8_t *)&g_SendData,
                       sizeof(g_SendData));
-            /*esp_err_t eResult =
-            esp_now_send(g_arrBroadcastAddress, (uint8_t *)
-            &g_SendData, sizeof(g_SendData));
+            /*esp_err_t result =
+            esp_now_send(broadcastAddress, (uint8_t *)
+            &Send_Data, sizeof(Send_Data));
 
-            if (eResult == ESP_OK) {
+            if (result == ESP_OK) {
               Serial.println("Sent with success");
             }
             else {
@@ -296,7 +312,7 @@ void OnDataRecv(const uint8_t *pucMac,
             g_SendData.iBusIndex = g_RecieveData.iBusIndex;
             g_SendData.iDirection =
                 g_RecieveData.iDirection;
-            send_data(g_arrBroadcastAddress,
+            send_data(g_auiBroadcastAddress,
                       (uint8_t *)&g_SendData,
                       sizeof(g_SendData));
         }
@@ -309,7 +325,7 @@ void OnDataRecv(const uint8_t *pucMac,
             g_SendData.iBusIndex = g_RecieveData.iBusIndex;
             g_SendData.iDirection =
                 g_RecieveData.iDirection;
-            send_data(g_arrBroadcastAddress,
+            send_data(g_auiBroadcastAddress,
                       (uint8_t *)&g_SendData,
                       sizeof(g_SendData));
         }
@@ -324,15 +340,15 @@ void OnDataRecv(const uint8_t *pucMac,
             g_SendData.iBusIndex = g_RecieveData.iBusIndex;
             g_SendData.iDirection =
                 g_RecieveData.iDirection;
-            send_data(g_arrBroadcastAddress,
+            send_data(g_auiBroadcastAddress,
                       (uint8_t *)&g_SendData,
                       sizeof(g_SendData));
 
-            /* esp_err_t eResult =
-             esp_now_send(g_arrBroadcastAddress, (uint8_t *)
-             &g_SendData, sizeof(g_SendData));
+            /* esp_err_t result =
+             esp_now_send(broadcastAddress, (uint8_t *)
+             &Send_Data, sizeof(Send_Data));
 
-             if (eResult == ESP_OK) {
+             if (result == ESP_OK) {
                Serial.println("Sent with success");
              }
              else {
@@ -348,15 +364,15 @@ void OnDataRecv(const uint8_t *pucMac,
             g_SendData.iBusIndex = g_RecieveData.iBusIndex;
             g_SendData.iDirection =
                 g_RecieveData.iDirection;
-            send_data(g_arrBroadcastAddress,
+            send_data(g_auiBroadcastAddress,
                       (uint8_t *)&g_SendData,
                       sizeof(g_SendData));
 
-            /*esp_err_t eResult =
-            esp_now_send(g_arrBroadcastAddress, (uint8_t *)
-            &g_SendData, sizeof(g_SendData));
+            /*esp_err_t result =
+            esp_now_send(broadcastAddress, (uint8_t *)
+            &Send_Data, sizeof(Send_Data));
 
-            if (eResult == ESP_OK) {
+            if (result == ESP_OK) {
               Serial.println("Sent with success");
             }
             else {
@@ -374,8 +390,8 @@ void OnDataRecv(const uint8_t *pucMac,
  * It prints "Delivery Success" if the packet was sent
  * successfully, otherwise it prints "Delivery Fail".
  *
- * @param pucMacAddr The MAC address of the receiver.
- * @param eStatus The status of the send operation.
+ * @param mac_addr The MAC address of the receiver.
+ * @param status The status of the send operation.
  */
 void OnDataSent(const uint8_t *pucMacAddr,
                 esp_now_send_status_t eStatus)
@@ -409,11 +425,11 @@ void setup()
         return;
     }
 
-    memcpy(peerInfo.peer_addr, g_arrBroadcastAddress, 6);
-    peerInfo.channel = 4;
-    peerInfo.encrypt = false;
+    memcpy(g_peerInfo.peer_addr, g_auiBroadcastAddress, 6);
+    g_peerInfo.channel = 4;
+    g_peerInfo.encrypt = false;
 
-    if (esp_now_add_peer(&peerInfo) != ESP_OK)
+    if (esp_now_add_peer(&g_peerInfo) != ESP_OK)
     {
         Serial.println("Failed to add peer");
         return;
@@ -434,7 +450,7 @@ void setup()
     esp_now_peer_info_t bus_peer;
     memset(&bus_peer, 0,
            sizeof(bus_peer)); // Clear peer structure
-    memcpy(bus_peer.peer_addr, g_arrBusMAC,
+    memcpy(bus_peer.peer_addr, g_auiBusMAC,
            6);                // Set peer MAC address
     bus_peer.channel = 4;     // Use default channel
     bus_peer.encrypt = false; // No encryption
@@ -451,28 +467,29 @@ void setup()
     P.begin();
     P.setIntensity(1); // keep it 3 or below as we are
                        // powering off the chip/usb
-    P.displayText(g_strBuffer, PA_CENTER, 0, 0, PA_PRINT,
+    P.displayText(g_szBuffer, PA_CENTER, 0, 0, PA_PRINT,
                   PA_NO_EFFECT);
 
-    g_dwTimeLast = millis();
+    g_ulTimeLast = millis();
 }
-
 /**
  * @brief Scrolls the text on the display.
  *
  * This function animates the display to scroll the text. It
  * resets the display after each scroll.
  */
+
 void scroll()
 {
     if (P.displayAnimate())
     {
-        P.displayText(g_strNewMessage, g_eScrollAlign,
-                      g_iScrollSpeed, g_iScrollPause,
+        P.displayText(g_szNewMessage, g_eScrollAlign,
+                      g_uiScrollSpeed, g_uiScrollPause,
                       g_eScrollEffect, g_eScrollEffect);
         P.displayReset();
     }
 }
+
 /**
  * @brief Main loop function for the Arduino sketch.
  *
@@ -488,10 +505,10 @@ void loop()
     { // If the boot button is pressed
         Message msg;
         msg.buttonPressed = true;
-        esp_err_t eResult = esp_now_send(
-            g_arrBusMAC, (uint8_t *)&msg, sizeof(msg));
+        esp_err_t result = esp_now_send(
+            g_auiBusMAC, (uint8_t *)&msg, sizeof(msg));
 
-        if (eResult == ESP_OK)
+        if (result == ESP_OK)
         {
             Serial.println("Sent with success");
         }
@@ -513,13 +530,13 @@ void loop()
         if (P.displayAnimate())
         {
             int s = (g_iShowTime / 60) + 1;
-            sprintf(g_strBuffer, "%01d",
+            sprintf(g_szBuffer, "%01d",
                     g_iShowTime); // the number "1" is the
                                   // number of digits that
                                   // you want always shown
                                   // on the screen for this
                                   // font we can have 5
-            P.displayText(g_strBuffer, PA_CENTER, 0, 0,
+            P.displayText(g_szBuffer, PA_CENTER, 0, 0,
                           PA_PRINT, PA_NO_EFFECT);
         }
 
@@ -551,3 +568,4 @@ void loop()
         }
     }
 }
+```

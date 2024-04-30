@@ -1,4 +1,4 @@
-/**@file BUS.ino*/
+```cpp
 #include <Adafruit_MPU6050.h> // Include MPU6050 library
 #include <SPI.h>
 #include <WiFi.h>
@@ -641,3 +641,4 @@ void loop()
     g_iAvgSample = g_iAvgSample + 1;
     Serial.println(""); // Print empty line for readability
 }
+```

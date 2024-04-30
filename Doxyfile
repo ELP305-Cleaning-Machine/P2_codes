@@ -1,0 +1,9 @@
+OUTPUT_DIRECTORY       = html_output
+INPUT                  = BUS \
+                         BusStopA \
+                         BusStopB \
+                         .
+RECURSIVE              = YES
+GENERATE_HTML          = YES
+FILE_PATTERNS = [...] *.ino
+EXTENSION_MAPPING = ino=c

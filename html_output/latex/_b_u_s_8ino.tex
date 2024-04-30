@@ -1,0 +1,324 @@
+\doxysection{BUS/\+BUS.ino File Reference}
+\hypertarget{_b_u_s_8ino}{}\label{_b_u_s_8ino}\index{BUS/BUS.ino@{BUS/BUS.ino}}
+{\ttfamily \#include $<$Adafruit\+\_\+\+MPU6050.\+h$>$}\newline
+{\ttfamily \#include $<$SPI.\+h$>$}\newline
+{\ttfamily \#include $<$Wi\+Fi.\+h$>$}\newline
+{\ttfamily \#include $<$Wire.\+h$>$}\newline
+{\ttfamily \#include $<$esp\+\_\+now.\+h$>$}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structtag_m_e_s_s_a_g_e}{tag\+MESSAGE}}
+\begin{DoxyCompactList}\small\item\em Structure for sending and receiving data. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_m_e_s_s_a_g_e___r_e_c_v}{MESSAGE\+\_\+\+RECV}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{_b_u_s_8ino_a8994190f393eaf34936360685debb15e}\label{_b_u_s_8ino_a8994190f393eaf34936360685debb15e} 
+typedef struct \mbox{\hyperlink{structtag_m_e_s_s_a_g_e}{tag\+MESSAGE}} {\bfseries MESSAGE}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{_b_u_s_8ino_a89e7e081914e7a05eb2be3f45ba8587d}{on\+Data\+Recv}} (const uint8\+\_\+t \texorpdfstring{$\ast$}{*}puc\+Mac, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}puc\+Incoming\+Data, int i\+Len)
+\begin{DoxyCompactList}\small\item\em Callback function that is executed when data is received. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_b_u_s_8ino_a30eeb6b1193798e442163fc81e52c729}{send\+\_\+data\+\_\+service}} (int i\+Index)
+\begin{DoxyCompactList}\small\item\em Sends a service message to the bus stops. \end{DoxyCompactList}\item 
+void IRAM\+\_\+\+ATTR \mbox{\hyperlink{_b_u_s_8ino_a2f6799cc71dd2e1b8819f1980b317329}{handle\+Interrupt}} ()
+\begin{DoxyCompactList}\small\item\em Interrupt service routine for handling button press. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_b_u_s_8ino_a7eee811cfe0d4a8ad6ddb6e6b6ec6027}{On\+Data\+Sent}} (const uint8\+\_\+t \texorpdfstring{$\ast$}{*}puc\+Mac\+Addr, esp\+\_\+now\+\_\+send\+\_\+status\+\_\+t e\+Status)
+\begin{DoxyCompactList}\small\item\em Callback function that is executed when data is sent. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_b_u_s_8ino_a7dfd9b79bc5a37d7df40207afbc5431f}{setup}} (void)
+\begin{DoxyCompactList}\small\item\em Setup function for the Arduino sketch. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{_b_u_s_8ino_abaeab7c376f23efb8907c7ba487a49f9}{get\+\_\+rssi}} (int i\+Bus\+Stop\+Index)
+\begin{DoxyCompactList}\small\item\em Gets the RSSI value for a specific bus stop. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_b_u_s_8ino_af9ead55967e581c2e6c25243e59add5b}{send\+\_\+data}} (int i\+Message\+Index, int i\+Bus\+Stop\+Index)
+\begin{DoxyCompactList}\small\item\em Sends a data message to the bus stops. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_b_u_s_8ino_a63ab5a55c2e373bc0465d56ee4231f09}{send\+\_\+data\+\_\+halt}} (int i\+Message\+Index, int i\+Bus\+Stop\+Index)
+\begin{DoxyCompactList}\small\item\em Sends a halt message to the bus stops. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_b_u_s_8ino_afe461d27b9c48d5921c00d521181f12f}{loop}} ()
+\begin{DoxyCompactList}\small\item\em Main loop function for the Arduino sketch. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+Adafruit\+\_\+\+MPU6050 \mbox{\hyperlink{_b_u_s_8ino_a47450f2dff514e8a4685176f53e40b5d}{g\+\_\+mpu\+Sensor}}
+\item 
+esp\+\_\+now\+\_\+peer\+\_\+info\+\_\+t \mbox{\hyperlink{_b_u_s_8ino_a00d089c7f954971aff61854f59726ac5}{g\+\_\+peer\+Info\+First}}
+\item 
+esp\+\_\+now\+\_\+peer\+\_\+info\+\_\+t \mbox{\hyperlink{_b_u_s_8ino_ae9e179b964924e1225b3a0269bfbade7}{g\+\_\+peer\+Info\+Second}}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{_b_u_s_8ino_ad5c515a9350579a4bfb378e163662352}{g\+\_\+arr\+Broadcast\+Address}} \mbox{[}2\mbox{]}\mbox{[}6\mbox{]}
+\begin{DoxyCompactList}\small\item\em MAC addresses for broadcast. \end{DoxyCompactList}\item 
+String \mbox{\hyperlink{_b_u_s_8ino_a1cf028b17bba6c35ad265d25769ac9d4}{g\+\_\+arr\+SSID}} \mbox{[}2\mbox{]}
+\begin{DoxyCompactList}\small\item\em SSIDs of the bus stops. \end{DoxyCompactList}\item 
+\Hypertarget{_b_u_s_8ino_a03e68a21c3ce3f02146e6a4d49b1dadb}\label{_b_u_s_8ino_a03e68a21c3ce3f02146e6a4d49b1dadb} 
+int {\bfseries g\+\_\+i\+Vertex} = 0
+\begin{DoxyCompactList}\small\item\em Vertex index. \end{DoxyCompactList}\item 
+\Hypertarget{_b_u_s_8ino_a9c323722998f3f30a38c361d5d4eb1ab}\label{_b_u_s_8ino_a9c323722998f3f30a38c361d5d4eb1ab} 
+const int {\bfseries g\+\_\+i\+Button\+Pin} = 0
+\begin{DoxyCompactList}\small\item\em Pin number for the button. \end{DoxyCompactList}\item 
+\Hypertarget{_b_u_s_8ino_afaae0c277a80214e1fba498a35e66399}\label{_b_u_s_8ino_afaae0c277a80214e1fba498a35e66399} 
+int {\bfseries g\+\_\+i\+OOSFlag} = 0
+\begin{DoxyCompactList}\small\item\em Flag for out of service status. \end{DoxyCompactList}\item 
+\Hypertarget{_b_u_s_8ino_ab33df07f2a093b59104993713d43aa23}\label{_b_u_s_8ino_ab33df07f2a093b59104993713d43aa23} 
+int {\bfseries g\+\_\+i\+Hope\+Flag} = 0
+\begin{DoxyCompactList}\small\item\em Flag for hope status. \end{DoxyCompactList}\item 
+volatile bool \mbox{\hyperlink{_b_u_s_8ino_ac1c617e6f57488317c234eddb7e207a1}{g\+\_\+b\+Button\+Pressed}}
+\begin{DoxyCompactList}\small\item\em Flag to indicate if the button is pressed. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{_b_u_s_8ino_a7820e8796c8d9972f7afa730d0b64e9a}{g\+\_\+b\+Passenger\+Flag}}
+\begin{DoxyCompactList}\small\item\em Flag for passenger status. \end{DoxyCompactList}\item 
+\Hypertarget{_b_u_s_8ino_ae1fd82bce4a1f7e765d7d19c94daac13}\label{_b_u_s_8ino_ae1fd82bce4a1f7e765d7d19c94daac13} 
+int {\bfseries g\+\_\+i\+Halt\+Flag} = 0
+\begin{DoxyCompactList}\small\item\em Flag for halt status. \end{DoxyCompactList}\item 
+\Hypertarget{_b_u_s_8ino_a4fa21e4855ee7c94a755cf91af6ce9b0}\label{_b_u_s_8ino_a4fa21e4855ee7c94a755cf91af6ce9b0} 
+int {\bfseries g\+\_\+i\+Latch\+Flag} = 0
+\begin{DoxyCompactList}\small\item\em Flag for latch status. \end{DoxyCompactList}\item 
+\Hypertarget{_b_u_s_8ino_afb1ff61df3846cda82a38cd6f090e696}\label{_b_u_s_8ino_afb1ff61df3846cda82a38cd6f090e696} 
+\mbox{\hyperlink{structtag_m_e_s_s_a_g_e}{MESSAGE}} {\bfseries g\+\_\+my\+Data}
+\begin{DoxyCompactList}\small\item\em Instance of MESSAGE to hold data. \end{DoxyCompactList}\item 
+\Hypertarget{_b_u_s_8ino_a385dcf437d328e3c38eed3493bbb01b8}\label{_b_u_s_8ino_a385dcf437d328e3c38eed3493bbb01b8} 
+const int {\bfseries g\+\_\+i\+Led\+Pin} = 2
+\begin{DoxyCompactList}\small\item\em Pin number for the LED. \end{DoxyCompactList}\item 
+\Hypertarget{_b_u_s_8ino_a4728278f4240f95c00c363ab0210d368}\label{_b_u_s_8ino_a4728278f4240f95c00c363ab0210d368} 
+int {\bfseries g\+\_\+i\+Avg\+Sample} = 0
+\item 
+\Hypertarget{_b_u_s_8ino_a5ab83db113e0fb36707b0e07da10e183}\label{_b_u_s_8ino_a5ab83db113e0fb36707b0e07da10e183} 
+int {\bfseries g\+\_\+arr\+Samples} \mbox{[}10\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{_b_u_s_8ino_abaeab7c376f23efb8907c7ba487a49f9}\label{_b_u_s_8ino_abaeab7c376f23efb8907c7ba487a49f9} 
+\index{BUS.ino@{BUS.ino}!get\_rssi@{get\_rssi}}
+\index{get\_rssi@{get\_rssi}!BUS.ino@{BUS.ino}}
+\doxysubsubsection{\texorpdfstring{get\_rssi()}{get\_rssi()}}
+{\footnotesize\ttfamily int get\+\_\+rssi (\begin{DoxyParamCaption}\item[{int}]{i\+Bus\+Stop\+Index }\end{DoxyParamCaption})}
+
+
+
+Gets the RSSI value for a specific bus stop. 
+
+This function scans the networks and returns the RSSI value for a specific bus stop.
+
+
+\begin{DoxyParams}{Parameters}
+{\em i\+Bus\+Stop\+Index} & The index of the bus stop. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The RSSI value. Returns 0 if the RSSI is greater than or equal to -\/50, 2 if the SSID matches the bus stop, and 1 otherwise. 
+\end{DoxyReturn}
+\Hypertarget{_b_u_s_8ino_a2f6799cc71dd2e1b8819f1980b317329}\label{_b_u_s_8ino_a2f6799cc71dd2e1b8819f1980b317329} 
+\index{BUS.ino@{BUS.ino}!handleInterrupt@{handleInterrupt}}
+\index{handleInterrupt@{handleInterrupt}!BUS.ino@{BUS.ino}}
+\doxysubsubsection{\texorpdfstring{handleInterrupt()}{handleInterrupt()}}
+{\footnotesize\ttfamily void IRAM\+\_\+\+ATTR handle\+Interrupt (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Interrupt service routine for handling button press. 
+
+This function is called when an interrupt is triggered. It toggles the g\+\_\+b\+Button\+Pressed flag. \Hypertarget{_b_u_s_8ino_afe461d27b9c48d5921c00d521181f12f}\label{_b_u_s_8ino_afe461d27b9c48d5921c00d521181f12f} 
+\index{BUS.ino@{BUS.ino}!loop@{loop}}
+\index{loop@{loop}!BUS.ino@{BUS.ino}}
+\doxysubsubsection{\texorpdfstring{loop()}{loop()}}
+{\footnotesize\ttfamily void loop (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Main loop function for the Arduino sketch. 
+
+This function continuously checks if the button is pressed and sends a service message if it is. It also checks if a passenger signal is received and turns on the LED if it is. It calculates the average sample of the accelerometer readings and determines if the bus is moving or stopped based on the average. If the bus is moving, it sends a \"{}\+BUS MOVING\"{} message. If the bus is stopped, it sends a \"{}\+BUS STOPPED\"{} message. It also checks the RSSI values and sends a halt message if the bus is near a bus stop. \Hypertarget{_b_u_s_8ino_a89e7e081914e7a05eb2be3f45ba8587d}\label{_b_u_s_8ino_a89e7e081914e7a05eb2be3f45ba8587d} 
+\index{BUS.ino@{BUS.ino}!onDataRecv@{onDataRecv}}
+\index{onDataRecv@{onDataRecv}!BUS.ino@{BUS.ino}}
+\doxysubsubsection{\texorpdfstring{onDataRecv()}{onDataRecv()}}
+{\footnotesize\ttfamily void on\+Data\+Recv (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{puc\+Mac,  }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{puc\+Incoming\+Data,  }\item[{int}]{i\+Len }\end{DoxyParamCaption})}
+
+
+
+Callback function that is executed when data is received. 
+
+This function handles the incoming data and sets the passenger flag to true if a message is received.
+
+
+\begin{DoxyParams}{Parameters}
+{\em puc\+Mac} & The MAC address of the sender. \\
+\hline
+{\em puc\+Incoming\+Data} & The incoming data. \\
+\hline
+{\em i\+Len} & The length of the incoming data. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{_b_u_s_8ino_a7eee811cfe0d4a8ad6ddb6e6b6ec6027}\label{_b_u_s_8ino_a7eee811cfe0d4a8ad6ddb6e6b6ec6027} 
+\index{BUS.ino@{BUS.ino}!OnDataSent@{OnDataSent}}
+\index{OnDataSent@{OnDataSent}!BUS.ino@{BUS.ino}}
+\doxysubsubsection{\texorpdfstring{OnDataSent()}{OnDataSent()}}
+{\footnotesize\ttfamily void On\+Data\+Sent (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{puc\+Mac\+Addr,  }\item[{esp\+\_\+now\+\_\+send\+\_\+status\+\_\+t}]{e\+Status }\end{DoxyParamCaption})}
+
+
+
+Callback function that is executed when data is sent. 
+
+This function prints the status of the last packet sent. It prints \"{}\+Delivery Success\"{} if the packet was sent successfully, otherwise it prints \"{}\+Delivery Fail\"{}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em puc\+Mac\+Addr} & The MAC address of the receiver. \\
+\hline
+{\em e\+Status} & The status of the send operation. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{_b_u_s_8ino_af9ead55967e581c2e6c25243e59add5b}\label{_b_u_s_8ino_af9ead55967e581c2e6c25243e59add5b} 
+\index{BUS.ino@{BUS.ino}!send\_data@{send\_data}}
+\index{send\_data@{send\_data}!BUS.ino@{BUS.ino}}
+\doxysubsubsection{\texorpdfstring{send\_data()}{send\_data()}}
+{\footnotesize\ttfamily void send\+\_\+data (\begin{DoxyParamCaption}\item[{int}]{i\+Message\+Index,  }\item[{int}]{i\+Bus\+Stop\+Index }\end{DoxyParamCaption})}
+
+
+
+Sends a data message to the bus stops. 
+
+This function sends a data message (either \"{}\+BUS \+STOPPED!\"{} or \"{}\+BUS STARTED!\"{}) to the bus stops.
+
+
+\begin{DoxyParams}{Parameters}
+{\em i\+Message\+Index} & The index of the message to be sent. If i\+Message\+Index is 0, \"{}\+BUS STOPPED!\"{} is sent. Otherwise, \"{}\+BUS STARTED!\"{} is sent. \\
+\hline
+{\em i\+Bus\+Stop\+Index} & The index of the bus stop to send the message to. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{_b_u_s_8ino_a63ab5a55c2e373bc0465d56ee4231f09}\label{_b_u_s_8ino_a63ab5a55c2e373bc0465d56ee4231f09} 
+\index{BUS.ino@{BUS.ino}!send\_data\_halt@{send\_data\_halt}}
+\index{send\_data\_halt@{send\_data\_halt}!BUS.ino@{BUS.ino}}
+\doxysubsubsection{\texorpdfstring{send\_data\_halt()}{send\_data\_halt()}}
+{\footnotesize\ttfamily void send\+\_\+data\+\_\+halt (\begin{DoxyParamCaption}\item[{int}]{i\+Message\+Index,  }\item[{int}]{i\+Bus\+Stop\+Index }\end{DoxyParamCaption})}
+
+
+
+Sends a halt message to the bus stops. 
+
+This function sends a halt message (either \"{}\+BUS HALTED\"{} or \"{}\+BUS MOVING\"{}) to the bus stops.
+
+
+\begin{DoxyParams}{Parameters}
+{\em i\+Message\+Index} & The index of the message to be sent. If i\+Message\+Index is 0, \"{}\+BUS HALTED\"{} is sent. Otherwise, \"{}\+BUS MOVING\"{} is sent. \\
+\hline
+{\em i\+Bus\+Stop\+Index} & The index of the bus stop to send the message to. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{_b_u_s_8ino_a30eeb6b1193798e442163fc81e52c729}\label{_b_u_s_8ino_a30eeb6b1193798e442163fc81e52c729} 
+\index{BUS.ino@{BUS.ino}!send\_data\_service@{send\_data\_service}}
+\index{send\_data\_service@{send\_data\_service}!BUS.ino@{BUS.ino}}
+\doxysubsubsection{\texorpdfstring{send\_data\_service()}{send\_data\_service()}}
+{\footnotesize\ttfamily void send\+\_\+data\+\_\+service (\begin{DoxyParamCaption}\item[{int}]{i\+Index }\end{DoxyParamCaption})}
+
+
+
+Sends a service message to the bus stops. 
+
+This function sends a service message (either \"{}\+BUS OOS\"{} or \"{}\+BUS NOOS\"{}) to the bus stops.
+
+
+\begin{DoxyParams}{Parameters}
+{\em i\+Index} & The index of the message to be sent. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{_b_u_s_8ino_a7dfd9b79bc5a37d7df40207afbc5431f}\label{_b_u_s_8ino_a7dfd9b79bc5a37d7df40207afbc5431f} 
+\index{BUS.ino@{BUS.ino}!setup@{setup}}
+\index{setup@{setup}!BUS.ino@{BUS.ino}}
+\doxysubsubsection{\texorpdfstring{setup()}{setup()}}
+{\footnotesize\ttfamily void setup (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Setup function for the Arduino sketch. 
+
+This function initializes the serial communication, sets the button pin as input and attaches an interrupt to it, initializes the MPU6050 sensor, sets the accelerometer range and filter bandwidth, initializes ESP-\/\+NOW, registers the send callback function, adds peers for ESP-\/\+NOW communication, registers the receive callback function, and sets the LED pin as output. 
+
+\doxysubsection{Variable Documentation}
+\Hypertarget{_b_u_s_8ino_ad5c515a9350579a4bfb378e163662352}\label{_b_u_s_8ino_ad5c515a9350579a4bfb378e163662352} 
+\index{BUS.ino@{BUS.ino}!g\_arrBroadcastAddress@{g\_arrBroadcastAddress}}
+\index{g\_arrBroadcastAddress@{g\_arrBroadcastAddress}!BUS.ino@{BUS.ino}}
+\doxysubsubsection{\texorpdfstring{g\_arrBroadcastAddress}{g\_arrBroadcastAddress}}
+{\footnotesize\ttfamily uint8\+\_\+t g\+\_\+arr\+Broadcast\+Address\mbox{[}2\mbox{]}\mbox{[}6\mbox{]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \{}
+\DoxyCodeLine{\ \ \ \ \{0xEC,\ 0x64,\ 0xC9,\ 0x86,\ 0x13,\ 0xC0\},}
+\DoxyCodeLine{\ \ \ \ \{0xEC,\ 0x64,\ 0xC9,\ 0x82,\ 0x7E,}
+\DoxyCodeLine{\ \ \ \ \ 0x10\}\}}
+
+\end{DoxyCode}
+
+
+MAC addresses for broadcast. 
+
+\Hypertarget{_b_u_s_8ino_a1cf028b17bba6c35ad265d25769ac9d4}\label{_b_u_s_8ino_a1cf028b17bba6c35ad265d25769ac9d4} 
+\index{BUS.ino@{BUS.ino}!g\_arrSSID@{g\_arrSSID}}
+\index{g\_arrSSID@{g\_arrSSID}!BUS.ino@{BUS.ino}}
+\doxysubsubsection{\texorpdfstring{g\_arrSSID}{g\_arrSSID}}
+{\footnotesize\ttfamily String g\+\_\+arr\+SSID\mbox{[}2\mbox{]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}BUS\_STOP\_A"{}},\ \textcolor{stringliteral}{"{}BUS\_STOP\_B"{}}\}}
+
+\end{DoxyCode}
+
+
+SSIDs of the bus stops. 
+
+\Hypertarget{_b_u_s_8ino_ac1c617e6f57488317c234eddb7e207a1}\label{_b_u_s_8ino_ac1c617e6f57488317c234eddb7e207a1} 
+\index{BUS.ino@{BUS.ino}!g\_bButtonPressed@{g\_bButtonPressed}}
+\index{g\_bButtonPressed@{g\_bButtonPressed}!BUS.ino@{BUS.ino}}
+\doxysubsubsection{\texorpdfstring{g\_bButtonPressed}{g\_bButtonPressed}}
+{\footnotesize\ttfamily volatile bool g\+\_\+b\+Button\+Pressed}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{false}}
+
+\end{DoxyCode}
+
+
+Flag to indicate if the button is pressed. 
+
+\Hypertarget{_b_u_s_8ino_a7820e8796c8d9972f7afa730d0b64e9a}\label{_b_u_s_8ino_a7820e8796c8d9972f7afa730d0b64e9a} 
+\index{BUS.ino@{BUS.ino}!g\_bPassengerFlag@{g\_bPassengerFlag}}
+\index{g\_bPassengerFlag@{g\_bPassengerFlag}!BUS.ino@{BUS.ino}}
+\doxysubsubsection{\texorpdfstring{g\_bPassengerFlag}{g\_bPassengerFlag}}
+{\footnotesize\ttfamily bool g\+\_\+b\+Passenger\+Flag}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{false}}
+
+\end{DoxyCode}
+
+
+Flag for passenger status. 
+
+\Hypertarget{_b_u_s_8ino_a47450f2dff514e8a4685176f53e40b5d}\label{_b_u_s_8ino_a47450f2dff514e8a4685176f53e40b5d} 
+\index{BUS.ino@{BUS.ino}!g\_mpuSensor@{g\_mpuSensor}}
+\index{g\_mpuSensor@{g\_mpuSensor}!BUS.ino@{BUS.ino}}
+\doxysubsubsection{\texorpdfstring{g\_mpuSensor}{g\_mpuSensor}}
+{\footnotesize\ttfamily Adafruit\+\_\+\+MPU6050 g\+\_\+mpu\+Sensor}
+
+Create an instance of the MPU6050 sensor \Hypertarget{_b_u_s_8ino_a00d089c7f954971aff61854f59726ac5}\label{_b_u_s_8ino_a00d089c7f954971aff61854f59726ac5} 
+\index{BUS.ino@{BUS.ino}!g\_peerInfoFirst@{g\_peerInfoFirst}}
+\index{g\_peerInfoFirst@{g\_peerInfoFirst}!BUS.ino@{BUS.ino}}
+\doxysubsubsection{\texorpdfstring{g\_peerInfoFirst}{g\_peerInfoFirst}}
+{\footnotesize\ttfamily esp\+\_\+now\+\_\+peer\+\_\+info\+\_\+t g\+\_\+peer\+Info\+First}
+
+Peer information for ESP-\/\+NOW communication with the first peer \Hypertarget{_b_u_s_8ino_ae9e179b964924e1225b3a0269bfbade7}\label{_b_u_s_8ino_ae9e179b964924e1225b3a0269bfbade7} 
+\index{BUS.ino@{BUS.ino}!g\_peerInfoSecond@{g\_peerInfoSecond}}
+\index{g\_peerInfoSecond@{g\_peerInfoSecond}!BUS.ino@{BUS.ino}}
+\doxysubsubsection{\texorpdfstring{g\_peerInfoSecond}{g\_peerInfoSecond}}
+{\footnotesize\ttfamily esp\+\_\+now\+\_\+peer\+\_\+info\+\_\+t g\+\_\+peer\+Info\+Second}
+
+Peer information for ESP-\/\+NOW communication with the second peer 

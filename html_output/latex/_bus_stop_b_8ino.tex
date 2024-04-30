@@ -1,0 +1,477 @@
+\doxysection{Bus\+Stop\+B/\+Bus\+StopB.ino File Reference}
+\hypertarget{_bus_stop_b_8ino}{}\label{_bus_stop_b_8ino}\index{BusStopB/BusStopB.ino@{BusStopB/BusStopB.ino}}
+{\ttfamily \#include $<$MD\+\_\+\+MAX72xx.\+h$>$}\newline
+{\ttfamily \#include $<$MD\+\_\+\+Parola.\+h$>$}\newline
+{\ttfamily \#include $<$SPI.\+h$>$}\newline
+{\ttfamily \#include $<$Wi\+Fi.\+h$>$}\newline
+{\ttfamily \#include $<$esp\+\_\+now.\+h$>$}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_message}{Message}}
+\begin{DoxyCompactList}\small\item\em Structure to send data. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structstruct__message}{struct\+\_\+message}}
+\begin{DoxyCompactList}\small\item\em Structure for sending and receiving data. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{_bus_stop_b_8ino_a4e132cfaa78353e3af1474a86b2dd535}\label{_bus_stop_b_8ino_a4e132cfaa78353e3af1474a86b2dd535} 
+\#define {\bfseries MAX\+\_\+\+DEVICES}~2
+\begin{DoxyCompactList}\small\item\em The maximum number of devices. \end{DoxyCompactList}\item 
+\Hypertarget{_bus_stop_b_8ino_a40f496979bb9d7199cca5e0ce136e698}\label{_bus_stop_b_8ino_a40f496979bb9d7199cca5e0ce136e698} 
+\#define {\bfseries CLK\+\_\+\+PIN}~18
+\begin{DoxyCompactList}\small\item\em The pin for the clock signal. \end{DoxyCompactList}\item 
+\Hypertarget{_bus_stop_b_8ino_adad67fe595ea440c8f8247ec2cddf070}\label{_bus_stop_b_8ino_adad67fe595ea440c8f8247ec2cddf070} 
+\#define {\bfseries DATA\+\_\+\+PIN}~23
+\begin{DoxyCompactList}\small\item\em The pin for the data signal. \end{DoxyCompactList}\item 
+\Hypertarget{_bus_stop_b_8ino_abfcf05153ddbd63d5aff5d018867cc19}\label{_bus_stop_b_8ino_abfcf05153ddbd63d5aff5d018867cc19} 
+\#define {\bfseries CS\+\_\+\+PIN}~5
+\begin{DoxyCompactList}\small\item\em The pin for the chip select signal. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{_bus_stop_b_8ino_a04988e7d812ffad244fd37a708b92536}{HARDWARE\+\_\+\+TYPE}}~    MD\+\_\+\+MAX72\+XX\+::\+PAROLA\+\_\+\+HW
+\item 
+\Hypertarget{_bus_stop_b_8ino_a6821bafc3c88dfb2e433a095df9940c6}\label{_bus_stop_b_8ino_a6821bafc3c88dfb2e433a095df9940c6} 
+\#define {\bfseries BUF\+\_\+\+SIZE}~75
+\begin{DoxyCompactList}\small\item\em The size of the buffer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{_bus_stop_b_8ino_add81b616c060a3c276b7dee4fcd54e9f}\label{_bus_stop_b_8ino_add81b616c060a3c276b7dee4fcd54e9f} 
+typedef struct \mbox{\hyperlink{structstruct__message}{struct\+\_\+message}} {\bfseries struct\+\_\+message}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void IRAM\+\_\+\+ATTR \mbox{\hyperlink{_bus_stop_b_8ino_a2f6799cc71dd2e1b8819f1980b317329}{handle\+Interrupt}} ()
+\begin{DoxyCompactList}\small\item\em Interrupt service routine for handling button press. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_bus_stop_b_8ino_a5d625a83130ab1624dd3305610963b08}{send\+\_\+data}} (const uint8\+\_\+t \texorpdfstring{$\ast$}{*}puc\+Peer\+Addr, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}puc\+Data, size\+\_\+t ui\+Len)
+\begin{DoxyCompactList}\small\item\em Sends data to a peer device over ESP-\/\+NOW. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_bus_stop_b_8ino_ad2b722f4799b9a1b4cffc1b5876bc367}{Update\+Interrupt}} (int i\+Bus\+Index, int i\+Bus\+Stop, int i\+Stop\+ID)
+\begin{DoxyCompactList}\small\item\em Updates the estimated time of arrival for a bus at a stop. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{_bus_stop_b_8ino_a8586a1977845ff45a0ee0d5852763e81}{Update\+Estimated}} ()
+\begin{DoxyCompactList}\small\item\em Updates the estimated time of arrival for all buses and returns the minimum. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_bus_stop_b_8ino_acefe9c2135b3617fe25eff3897551c87}{On\+Data\+Recv}} (const uint8\+\_\+t \texorpdfstring{$\ast$}{*}puc\+Mac, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}puc\+Incoming\+Data, int i\+Len)
+\begin{DoxyCompactList}\small\item\em Callback function that is executed when data is received. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_bus_stop_b_8ino_a7eee811cfe0d4a8ad6ddb6e6b6ec6027}{On\+Data\+Sent}} (const uint8\+\_\+t \texorpdfstring{$\ast$}{*}puc\+Mac\+Addr, esp\+\_\+now\+\_\+send\+\_\+status\+\_\+t e\+Status)
+\begin{DoxyCompactList}\small\item\em Callback function that is executed when data is sent. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_bus_stop_b_8ino_a4fc01d736fe50cf5b977f755b675f11d}{setup}} ()
+\begin{DoxyCompactList}\small\item\em Setup function for the Arduino sketch. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_bus_stop_b_8ino_a3971e219fb69093f8cbc4484bd36a080}{scroll}} ()
+\begin{DoxyCompactList}\small\item\em Scrolls the text on the display. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_bus_stop_b_8ino_afe461d27b9c48d5921c00d521181f12f}{loop}} ()
+\begin{DoxyCompactList}\small\item\em Main loop function for the Arduino sketch. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+MD\+\_\+\+Parola \mbox{\hyperlink{_bus_stop_b_8ino_a493e81ea8983e0f797dc47c3f65cf9c0}{P}}
+\begin{DoxyCompactList}\small\item\em Instance of the MD\+\_\+\+Parola class. \end{DoxyCompactList}\item 
+\Hypertarget{_bus_stop_b_8ino_a08fc144fdb4de72197adeddc09cc38b8}\label{_bus_stop_b_8ino_a08fc144fdb4de72197adeddc09cc38b8} 
+int {\bfseries g\+\_\+i\+Stop} = 0
+\begin{DoxyCompactList}\small\item\em Stop variable. \end{DoxyCompactList}\item 
+\Hypertarget{_bus_stop_b_8ino_aac15c928c6250e10cf28e4857b0641ff}\label{_bus_stop_b_8ino_aac15c928c6250e10cf28e4857b0641ff} 
+uint8\+\_\+t {\bfseries g\+\_\+ui\+Scroll\+Speed} = 25
+\begin{DoxyCompactList}\small\item\em The speed of the scroll. \end{DoxyCompactList}\item 
+text\+Effect\+\_\+t \mbox{\hyperlink{_bus_stop_b_8ino_a05438a16b4a6471e2a62f7d75de8dc3f}{g\+\_\+e\+Scroll\+Effect}}
+\begin{DoxyCompactList}\small\item\em The effect of the scroll. \end{DoxyCompactList}\item 
+text\+Position\+\_\+t \mbox{\hyperlink{_bus_stop_b_8ino_a373b79a402969f81b41e2b167fc2e096}{g\+\_\+e\+Scroll\+Align}}
+\begin{DoxyCompactList}\small\item\em The alignment of the scroll. \end{DoxyCompactList}\item 
+uint16\+\_\+t \mbox{\hyperlink{_bus_stop_b_8ino_a487b5baa75ea6db15433aa58c4a833c9}{g\+\_\+ui\+Scroll\+Pause}}
+\begin{DoxyCompactList}\small\item\em The pause time of the scroll in milliseconds. \end{DoxyCompactList}\item 
+char \mbox{\hyperlink{_bus_stop_b_8ino_a71aeeaabe068a1e1da5389d40c3ac9dc}{g\+\_\+sz\+Cur\+Message}} \mbox{[}\mbox{\hyperlink{_bus_stop_a_8ino_a6821bafc3c88dfb2e433a095df9940c6}{BUF\+\_\+\+SIZE}}\mbox{]}
+\begin{DoxyCompactList}\small\item\em The current message. \end{DoxyCompactList}\item 
+char \mbox{\hyperlink{_bus_stop_b_8ino_acb895d9f9adb03cf238f60e4e6507458}{g\+\_\+sz\+New\+Message}} \mbox{[}\mbox{\hyperlink{_bus_stop_a_8ino_a6821bafc3c88dfb2e433a095df9940c6}{BUF\+\_\+\+SIZE}}\mbox{]}
+\begin{DoxyCompactList}\small\item\em The new message. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{_bus_stop_b_8ino_aacd729c61a1ec29fa63624253522b090}{g\+\_\+b\+New\+Message\+Available}}
+\begin{DoxyCompactList}\small\item\em Flag to check if a new message is available. \end{DoxyCompactList}\item 
+\Hypertarget{_bus_stop_b_8ino_a94c1accbfe62ec25a06a7b6a286088f4}\label{_bus_stop_b_8ino_a94c1accbfe62ec25a06a7b6a286088f4} 
+char {\bfseries g\+\_\+sz\+Buffer} \mbox{[}3\mbox{]} = \"{} \"{}
+\begin{DoxyCompactList}\small\item\em Buffer to hold the numbers. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{_bus_stop_b_8ino_ab4777b3b1dec413e4243dfc50c75d6a1}{g\+\_\+aui\+Broadcast\+Address}} \mbox{[}$\,$\mbox{]}
+\begin{DoxyCompactList}\small\item\em The broadcast address. \end{DoxyCompactList}\item 
+\Hypertarget{_bus_stop_b_8ino_a0df0f7e92c63c31e41094488af5a7959}\label{_bus_stop_b_8ino_a0df0f7e92c63c31e41094488af5a7959} 
+int {\bfseries g\+\_\+i\+Flag} = 0
+\begin{DoxyCompactList}\small\item\em Flag variable. \end{DoxyCompactList}\item 
+\Hypertarget{_bus_stop_b_8ino_aa6dbbc0044c27b5ef879fcb3da362814}\label{_bus_stop_b_8ino_aa6dbbc0044c27b5ef879fcb3da362814} 
+unsigned long {\bfseries g\+\_\+ul\+Time}
+\begin{DoxyCompactList}\small\item\em Time variable. \end{DoxyCompactList}\item 
+\Hypertarget{_bus_stop_b_8ino_a8254261c20ccbab865ebbf1a5bfa133d}\label{_bus_stop_b_8ino_a8254261c20ccbab865ebbf1a5bfa133d} 
+unsigned long {\bfseries g\+\_\+ul\+Time\+Last}
+\begin{DoxyCompactList}\small\item\em Last time variable. \end{DoxyCompactList}\item 
+\Hypertarget{_bus_stop_b_8ino_a9f78fe33bcc25d17e03504662fc891d1}\label{_bus_stop_b_8ino_a9f78fe33bcc25d17e03504662fc891d1} 
+bool {\bfseries g\+\_\+b\+Service} = true
+\begin{DoxyCompactList}\small\item\em Service flag. \end{DoxyCompactList}\item 
+\Hypertarget{_bus_stop_b_8ino_a98acb96a20d03dcafbaa78d8cd638f99}\label{_bus_stop_b_8ino_a98acb96a20d03dcafbaa78d8cd638f99} 
+int {\bfseries g\+\_\+i\+Halt} = 0
+\begin{DoxyCompactList}\small\item\em Halt variable. \end{DoxyCompactList}\item 
+\Hypertarget{_bus_stop_b_8ino_a4d1463333605f7af7ffc98307cb04a98}\label{_bus_stop_b_8ino_a4d1463333605f7af7ffc98307cb04a98} 
+int {\bfseries g\+\_\+i\+Service} = 0
+\begin{DoxyCompactList}\small\item\em Service variable. \end{DoxyCompactList}\item 
+\Hypertarget{_bus_stop_b_8ino_a86c10b3066a5583184977ad55f889ae7}\label{_bus_stop_b_8ino_a86c10b3066a5583184977ad55f889ae7} 
+int {\bfseries g\+\_\+i\+Initial} = 0
+\begin{DoxyCompactList}\small\item\em Initial variable. \end{DoxyCompactList}\item 
+\Hypertarget{_bus_stop_b_8ino_a54f54f2f6e96007e29f247ff0d11d3fe}\label{_bus_stop_b_8ino_a54f54f2f6e96007e29f247ff0d11d3fe} 
+int {\bfseries g\+\_\+i\+Stop\+ID} = 2
+\begin{DoxyCompactList}\small\item\em Unique ID of the operating stop. \end{DoxyCompactList}\item 
+\Hypertarget{_bus_stop_b_8ino_aaa8be08e1d58b89e51dcc589cfcebd74}\label{_bus_stop_b_8ino_aaa8be08e1d58b89e51dcc589cfcebd74} 
+const int {\bfseries g\+\_\+i\+Bus\+Num} = 1
+\begin{DoxyCompactList}\small\item\em Total number of buses. \end{DoxyCompactList}\item 
+\Hypertarget{_bus_stop_b_8ino_a8e322c2f9205caac54f4b04dd651caae}\label{_bus_stop_b_8ino_a8e322c2f9205caac54f4b04dd651caae} 
+const int {\bfseries g\+\_\+i\+Stop\+Num} = 2
+\begin{DoxyCompactList}\small\item\em Total number of stops. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{_bus_stop_b_8ino_a46e02b2da0c970dcf7b2eae643d9af56}{g\+\_\+ai\+Estimated}} \mbox{[}\mbox{\hyperlink{_bus_stop_b_8ino_aaa8be08e1d58b89e51dcc589cfcebd74}{g\+\_\+i\+Bus\+Num}}\mbox{]}
+\item 
+int \mbox{\hyperlink{_bus_stop_b_8ino_afbb0b04028f51225d17822213cda7871}{g\+\_\+ai\+Scheduled}} \mbox{[}\mbox{\hyperlink{_bus_stop_b_8ino_a8e322c2f9205caac54f4b04dd651caae}{g\+\_\+i\+Stop\+Num}}\mbox{]}\mbox{[}\mbox{\hyperlink{_bus_stop_b_8ino_a8e322c2f9205caac54f4b04dd651caae}{g\+\_\+i\+Stop\+Num}}\mbox{]}
+\item 
+\Hypertarget{_bus_stop_b_8ino_a0d7e28929914287b620f5b31e3963f75}\label{_bus_stop_b_8ino_a0d7e28929914287b620f5b31e3963f75} 
+esp\+\_\+now\+\_\+peer\+\_\+info\+\_\+t {\bfseries g\+\_\+peer\+Info}
+\begin{DoxyCompactList}\small\item\em Peer information. \end{DoxyCompactList}\item 
+\Hypertarget{_bus_stop_b_8ino_ace52711cba2509c5cf5a9c8cc013f31c}\label{_bus_stop_b_8ino_ace52711cba2509c5cf5a9c8cc013f31c} 
+bool {\bfseries g\+\_\+b\+Halt} = false
+\begin{DoxyCompactList}\small\item\em Halt flag. \end{DoxyCompactList}\item 
+\Hypertarget{_bus_stop_b_8ino_a84dbf00f9809767fea8867b2a2fc6a13}\label{_bus_stop_b_8ino_a84dbf00f9809767fea8867b2a2fc6a13} 
+int {\bfseries g\+\_\+i\+Show\+Time} = 0
+\begin{DoxyCompactList}\small\item\em Show time variable. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{_bus_stop_b_8ino_a39ac7a57b799d652b223b8cad2cc3096}{g\+\_\+aui\+Bus\+MAC}} \mbox{[}$\,$\mbox{]}
+\begin{DoxyCompactList}\small\item\em MAC address of the receiver (bus). \end{DoxyCompactList}\item 
+volatile bool \mbox{\hyperlink{_bus_stop_b_8ino_a123eb982a1926272d793c19be8cbd2e6}{g\+\_\+b\+Button}}
+\begin{DoxyCompactList}\small\item\em Flag to indicate if the button is pressed. \end{DoxyCompactList}\item 
+\Hypertarget{_bus_stop_b_8ino_a99ae7ab54d158446051bfe5f44ee3784}\label{_bus_stop_b_8ino_a99ae7ab54d158446051bfe5f44ee3784} 
+int {\bfseries g\+\_\+i\+Button\+Pin} = 0
+\begin{DoxyCompactList}\small\item\em The pin connected to the button. \end{DoxyCompactList}\item 
+\Hypertarget{_bus_stop_b_8ino_a018a50f6a682377e8ee8a931160f258d}\label{_bus_stop_b_8ino_a018a50f6a682377e8ee8a931160f258d} 
+\mbox{\hyperlink{structstruct__message}{struct\+\_\+message}} {\bfseries g\+\_\+\+Send\+Data}
+\begin{DoxyCompactList}\small\item\em Data to send. \end{DoxyCompactList}\item 
+\Hypertarget{_bus_stop_b_8ino_abf13da0ba5ecbc7102e3a21a2da50bfc}\label{_bus_stop_b_8ino_abf13da0ba5ecbc7102e3a21a2da50bfc} 
+\mbox{\hyperlink{structstruct__message}{struct\+\_\+message}} {\bfseries g\+\_\+\+Recieve\+Data}
+\begin{DoxyCompactList}\small\item\em Data received. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\Hypertarget{_bus_stop_b_8ino_a04988e7d812ffad244fd37a708b92536}\label{_bus_stop_b_8ino_a04988e7d812ffad244fd37a708b92536} 
+\index{BusStopB.ino@{BusStopB.ino}!HARDWARE\_TYPE@{HARDWARE\_TYPE}}
+\index{HARDWARE\_TYPE@{HARDWARE\_TYPE}!BusStopB.ino@{BusStopB.ino}}
+\doxysubsubsection{\texorpdfstring{HARDWARE\_TYPE}{HARDWARE\_TYPE}}
+{\footnotesize\ttfamily \#define HARDWARE\+\_\+\+TYPE~    MD\+\_\+\+MAX72\+XX\+::\+PAROLA\+\_\+\+HW}
+
+The type of hardware being used. 
+
+\doxysubsection{Function Documentation}
+\Hypertarget{_bus_stop_b_8ino_a2f6799cc71dd2e1b8819f1980b317329}\label{_bus_stop_b_8ino_a2f6799cc71dd2e1b8819f1980b317329} 
+\index{BusStopB.ino@{BusStopB.ino}!handleInterrupt@{handleInterrupt}}
+\index{handleInterrupt@{handleInterrupt}!BusStopB.ino@{BusStopB.ino}}
+\doxysubsubsection{\texorpdfstring{handleInterrupt()}{handleInterrupt()}}
+{\footnotesize\ttfamily void IRAM\+\_\+\+ATTR handle\+Interrupt (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Interrupt service routine for handling button press. 
+
+This function is called when an interrupt is triggered. It sets the button flag to true.
+
+\begin{DoxyNote}{Note}
+This function is placed in IRAM, which is a region of RAM that is directly accessible by the CPU. 
+\end{DoxyNote}
+\Hypertarget{_bus_stop_b_8ino_afe461d27b9c48d5921c00d521181f12f}\label{_bus_stop_b_8ino_afe461d27b9c48d5921c00d521181f12f} 
+\index{BusStopB.ino@{BusStopB.ino}!loop@{loop}}
+\index{loop@{loop}!BusStopB.ino@{BusStopB.ino}}
+\doxysubsubsection{\texorpdfstring{loop()}{loop()}}
+{\footnotesize\ttfamily void loop (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Main loop function for the Arduino sketch. 
+
+This function continuously checks if the button is pressed and sends a message if it is. It also updates the estimated time of arrival and displays it on the screen. If the bus is halted or out of service, it displays the appropriate message. \Hypertarget{_bus_stop_b_8ino_acefe9c2135b3617fe25eff3897551c87}\label{_bus_stop_b_8ino_acefe9c2135b3617fe25eff3897551c87} 
+\index{BusStopB.ino@{BusStopB.ino}!OnDataRecv@{OnDataRecv}}
+\index{OnDataRecv@{OnDataRecv}!BusStopB.ino@{BusStopB.ino}}
+\doxysubsubsection{\texorpdfstring{OnDataRecv()}{OnDataRecv()}}
+{\footnotesize\ttfamily void On\+Data\+Recv (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{puc\+Mac,  }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{puc\+Incoming\+Data,  }\item[{int}]{i\+Len }\end{DoxyParamCaption})}
+
+
+
+Callback function that is executed when data is received. 
+
+This function handles the incoming data and performs different actions based on the received message. It updates the status of the bus (halted, moving, out of service, etc.) and the estimated time of arrival.
+
+
+\begin{DoxyParams}{Parameters}
+{\em mac} & The MAC address of the sender. \\
+\hline
+{\em incoming\+Data} & The incoming data. \\
+\hline
+{\em len} & The length of the incoming data. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{_bus_stop_b_8ino_a7eee811cfe0d4a8ad6ddb6e6b6ec6027}\label{_bus_stop_b_8ino_a7eee811cfe0d4a8ad6ddb6e6b6ec6027} 
+\index{BusStopB.ino@{BusStopB.ino}!OnDataSent@{OnDataSent}}
+\index{OnDataSent@{OnDataSent}!BusStopB.ino@{BusStopB.ino}}
+\doxysubsubsection{\texorpdfstring{OnDataSent()}{OnDataSent()}}
+{\footnotesize\ttfamily void On\+Data\+Sent (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{puc\+Mac\+Addr,  }\item[{esp\+\_\+now\+\_\+send\+\_\+status\+\_\+t}]{e\+Status }\end{DoxyParamCaption})}
+
+
+
+Callback function that is executed when data is sent. 
+
+This function prints the status of the last packet sent. It prints \"{}\+Delivery Success\"{} if the packet was sent successfully, otherwise it prints \"{}\+Delivery Fail\"{}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em mac\+\_\+addr} & The MAC address of the receiver. \\
+\hline
+{\em status} & The status of the send operation. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{_bus_stop_b_8ino_a3971e219fb69093f8cbc4484bd36a080}\label{_bus_stop_b_8ino_a3971e219fb69093f8cbc4484bd36a080} 
+\index{BusStopB.ino@{BusStopB.ino}!scroll@{scroll}}
+\index{scroll@{scroll}!BusStopB.ino@{BusStopB.ino}}
+\doxysubsubsection{\texorpdfstring{scroll()}{scroll()}}
+{\footnotesize\ttfamily void scroll (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Scrolls the text on the display. 
+
+This function animates the display to scroll the text. It resets the display after each scroll. \Hypertarget{_bus_stop_b_8ino_a5d625a83130ab1624dd3305610963b08}\label{_bus_stop_b_8ino_a5d625a83130ab1624dd3305610963b08} 
+\index{BusStopB.ino@{BusStopB.ino}!send\_data@{send\_data}}
+\index{send\_data@{send\_data}!BusStopB.ino@{BusStopB.ino}}
+\doxysubsubsection{\texorpdfstring{send\_data()}{send\_data()}}
+{\footnotesize\ttfamily void send\+\_\+data (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{puc\+Peer\+Addr,  }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{puc\+Data,  }\item[{size\+\_\+t}]{ui\+Len }\end{DoxyParamCaption})}
+
+
+
+Sends data to a peer device over ESP-\/\+NOW. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em peer\+\_\+addr} & The MAC address of the peer device. \\
+\hline
+{\em data} & The data to be sent. \\
+\hline
+{\em len} & The length of the data.\\
+\hline
+\end{DoxyParams}
+This function sends data to a peer device over ESP-\/\+NOW. It prints a success message to the serial port if the data is sent successfully, otherwise it prints an error message. \Hypertarget{_bus_stop_b_8ino_a4fc01d736fe50cf5b977f755b675f11d}\label{_bus_stop_b_8ino_a4fc01d736fe50cf5b977f755b675f11d} 
+\index{BusStopB.ino@{BusStopB.ino}!setup@{setup}}
+\index{setup@{setup}!BusStopB.ino@{BusStopB.ino}}
+\doxysubsubsection{\texorpdfstring{setup()}{setup()}}
+{\footnotesize\ttfamily void setup (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Setup function for the Arduino sketch. 
+
+This function initializes the serial monitor, sets the device as a Wi-\/\+Fi Station, initializes ESP-\/\+NOW, registers callback functions, sets up the button interrupt, and initializes the display. \Hypertarget{_bus_stop_b_8ino_a8586a1977845ff45a0ee0d5852763e81}\label{_bus_stop_b_8ino_a8586a1977845ff45a0ee0d5852763e81} 
+\index{BusStopB.ino@{BusStopB.ino}!UpdateEstimated@{UpdateEstimated}}
+\index{UpdateEstimated@{UpdateEstimated}!BusStopB.ino@{BusStopB.ino}}
+\doxysubsubsection{\texorpdfstring{UpdateEstimated()}{UpdateEstimated()}}
+{\footnotesize\ttfamily int Update\+Estimated (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Updates the estimated time of arrival for all buses and returns the minimum. 
+
+\begin{DoxyReturn}{Returns}
+The minimum estimated time of arrival.
+\end{DoxyReturn}
+This function decrements the estimated times and takes the minimum. \Hypertarget{_bus_stop_b_8ino_ad2b722f4799b9a1b4cffc1b5876bc367}\label{_bus_stop_b_8ino_ad2b722f4799b9a1b4cffc1b5876bc367} 
+\index{BusStopB.ino@{BusStopB.ino}!UpdateInterrupt@{UpdateInterrupt}}
+\index{UpdateInterrupt@{UpdateInterrupt}!BusStopB.ino@{BusStopB.ino}}
+\doxysubsubsection{\texorpdfstring{UpdateInterrupt()}{UpdateInterrupt()}}
+{\footnotesize\ttfamily void Update\+Interrupt (\begin{DoxyParamCaption}\item[{int}]{i\+Bus\+Index,  }\item[{int}]{i\+Bus\+Stop,  }\item[{int}]{i\+Stop\+ID }\end{DoxyParamCaption})}
+
+
+
+Updates the estimated time of arrival for a bus at a stop. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em n\+Bus\+Index} & The index of the bus. \\
+\hline
+{\em n\+Bus\+Stop} & The index of the bus stop. \\
+\hline
+{\em n\+Stop\+ID} & The ID of the stop.\\
+\hline
+\end{DoxyParams}
+This function updates the scheduled times for the given bus when an interrupt occurs. 
+
+\doxysubsection{Variable Documentation}
+\Hypertarget{_bus_stop_b_8ino_a46e02b2da0c970dcf7b2eae643d9af56}\label{_bus_stop_b_8ino_a46e02b2da0c970dcf7b2eae643d9af56} 
+\index{BusStopB.ino@{BusStopB.ino}!g\_aiEstimated@{g\_aiEstimated}}
+\index{g\_aiEstimated@{g\_aiEstimated}!BusStopB.ino@{BusStopB.ino}}
+\doxysubsubsection{\texorpdfstring{g\_aiEstimated}{g\_aiEstimated}}
+{\footnotesize\ttfamily int g\+\_\+ai\+Estimated\mbox{[}\mbox{\hyperlink{_bus_stop_b_8ino_aaa8be08e1d58b89e51dcc589cfcebd74}{g\+\_\+i\+Bus\+Num}}\mbox{]}}
+
+Array to store estimated times in seconds. \Hypertarget{_bus_stop_b_8ino_afbb0b04028f51225d17822213cda7871}\label{_bus_stop_b_8ino_afbb0b04028f51225d17822213cda7871} 
+\index{BusStopB.ino@{BusStopB.ino}!g\_aiScheduled@{g\_aiScheduled}}
+\index{g\_aiScheduled@{g\_aiScheduled}!BusStopB.ino@{BusStopB.ino}}
+\doxysubsubsection{\texorpdfstring{g\_aiScheduled}{g\_aiScheduled}}
+{\footnotesize\ttfamily int g\+\_\+ai\+Scheduled\mbox{[}\mbox{\hyperlink{_bus_stop_b_8ino_a8e322c2f9205caac54f4b04dd651caae}{g\+\_\+i\+Stop\+Num}}\mbox{]}\mbox{[}\mbox{\hyperlink{_bus_stop_b_8ino_a8e322c2f9205caac54f4b04dd651caae}{g\+\_\+i\+Stop\+Num}}\mbox{]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \{}
+\DoxyCodeLine{\ \ \ \ \{100,\ 50\},\ \{50,\ 100\}\}}
+
+\end{DoxyCode}
+2D array to store scheduled times in seconds. \Hypertarget{_bus_stop_b_8ino_ab4777b3b1dec413e4243dfc50c75d6a1}\label{_bus_stop_b_8ino_ab4777b3b1dec413e4243dfc50c75d6a1} 
+\index{BusStopB.ino@{BusStopB.ino}!g\_auiBroadcastAddress@{g\_auiBroadcastAddress}}
+\index{g\_auiBroadcastAddress@{g\_auiBroadcastAddress}!BusStopB.ino@{BusStopB.ino}}
+\doxysubsubsection{\texorpdfstring{g\_auiBroadcastAddress}{g\_auiBroadcastAddress}}
+{\footnotesize\ttfamily uint8\+\_\+t g\+\_\+aui\+Broadcast\+Address\mbox{[}$\,$\mbox{]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \{}
+\DoxyCodeLine{\ \ \ \ 0xEC,\ 0x64,\ 0xC9,}
+\DoxyCodeLine{\ \ \ \ 0x86,\ 0x13,\ 0xC0\}}
+
+\end{DoxyCode}
+
+
+The broadcast address. 
+
+\Hypertarget{_bus_stop_b_8ino_a39ac7a57b799d652b223b8cad2cc3096}\label{_bus_stop_b_8ino_a39ac7a57b799d652b223b8cad2cc3096} 
+\index{BusStopB.ino@{BusStopB.ino}!g\_auiBusMAC@{g\_auiBusMAC}}
+\index{g\_auiBusMAC@{g\_auiBusMAC}!BusStopB.ino@{BusStopB.ino}}
+\doxysubsubsection{\texorpdfstring{g\_auiBusMAC}{g\_auiBusMAC}}
+{\footnotesize\ttfamily uint8\+\_\+t g\+\_\+aui\+Bus\+MAC\mbox{[}$\,$\mbox{]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \{}
+\DoxyCodeLine{\ \ \ \ 0xE8,\ 0x6B,\ 0xEA,\ 0xD4,}
+\DoxyCodeLine{\ \ \ \ 0x27,\ 0x7C\}}
+
+\end{DoxyCode}
+
+
+MAC address of the receiver (bus). 
+
+\Hypertarget{_bus_stop_b_8ino_a123eb982a1926272d793c19be8cbd2e6}\label{_bus_stop_b_8ino_a123eb982a1926272d793c19be8cbd2e6} 
+\index{BusStopB.ino@{BusStopB.ino}!g\_bButton@{g\_bButton}}
+\index{g\_bButton@{g\_bButton}!BusStopB.ino@{BusStopB.ino}}
+\doxysubsubsection{\texorpdfstring{g\_bButton}{g\_bButton}}
+{\footnotesize\ttfamily volatile bool g\+\_\+b\+Button}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{false}}
+
+\end{DoxyCode}
+
+
+Flag to indicate if the button is pressed. 
+
+\Hypertarget{_bus_stop_b_8ino_aacd729c61a1ec29fa63624253522b090}\label{_bus_stop_b_8ino_aacd729c61a1ec29fa63624253522b090} 
+\index{BusStopB.ino@{BusStopB.ino}!g\_bNewMessageAvailable@{g\_bNewMessageAvailable}}
+\index{g\_bNewMessageAvailable@{g\_bNewMessageAvailable}!BusStopB.ino@{BusStopB.ino}}
+\doxysubsubsection{\texorpdfstring{g\_bNewMessageAvailable}{g\_bNewMessageAvailable}}
+{\footnotesize\ttfamily bool g\+\_\+b\+New\+Message\+Available}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{true}}
+
+\end{DoxyCode}
+
+
+Flag to check if a new message is available. 
+
+\Hypertarget{_bus_stop_b_8ino_a373b79a402969f81b41e2b167fc2e096}\label{_bus_stop_b_8ino_a373b79a402969f81b41e2b167fc2e096} 
+\index{BusStopB.ino@{BusStopB.ino}!g\_eScrollAlign@{g\_eScrollAlign}}
+\index{g\_eScrollAlign@{g\_eScrollAlign}!BusStopB.ino@{BusStopB.ino}}
+\doxysubsubsection{\texorpdfstring{g\_eScrollAlign}{g\_eScrollAlign}}
+{\footnotesize\ttfamily text\+Position\+\_\+t g\+\_\+e\+Scroll\+Align}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\ \ \ \ PA\_LEFT}
+
+\end{DoxyCode}
+
+
+The alignment of the scroll. 
+
+\Hypertarget{_bus_stop_b_8ino_a05438a16b4a6471e2a62f7d75de8dc3f}\label{_bus_stop_b_8ino_a05438a16b4a6471e2a62f7d75de8dc3f} 
+\index{BusStopB.ino@{BusStopB.ino}!g\_eScrollEffect@{g\_eScrollEffect}}
+\index{g\_eScrollEffect@{g\_eScrollEffect}!BusStopB.ino@{BusStopB.ino}}
+\doxysubsubsection{\texorpdfstring{g\_eScrollEffect}{g\_eScrollEffect}}
+{\footnotesize\ttfamily text\+Effect\+\_\+t g\+\_\+e\+Scroll\+Effect}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\ \ \ \ PA\_SCROLL\_LEFT}
+
+\end{DoxyCode}
+
+
+The effect of the scroll. 
+
+\Hypertarget{_bus_stop_b_8ino_a71aeeaabe068a1e1da5389d40c3ac9dc}\label{_bus_stop_b_8ino_a71aeeaabe068a1e1da5389d40c3ac9dc} 
+\index{BusStopB.ino@{BusStopB.ino}!g\_szCurMessage@{g\_szCurMessage}}
+\index{g\_szCurMessage@{g\_szCurMessage}!BusStopB.ino@{BusStopB.ino}}
+\doxysubsubsection{\texorpdfstring{g\_szCurMessage}{g\_szCurMessage}}
+{\footnotesize\ttfamily char g\+\_\+sz\+Cur\+Message\mbox{[}\mbox{\hyperlink{_bus_stop_a_8ino_a6821bafc3c88dfb2e433a095df9940c6}{BUF\+\_\+\+SIZE}}\mbox{]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}"{}}\}}
+
+\end{DoxyCode}
+
+
+The current message. 
+
+\Hypertarget{_bus_stop_b_8ino_acb895d9f9adb03cf238f60e4e6507458}\label{_bus_stop_b_8ino_acb895d9f9adb03cf238f60e4e6507458} 
+\index{BusStopB.ino@{BusStopB.ino}!g\_szNewMessage@{g\_szNewMessage}}
+\index{g\_szNewMessage@{g\_szNewMessage}!BusStopB.ino@{BusStopB.ino}}
+\doxysubsubsection{\texorpdfstring{g\_szNewMessage}{g\_szNewMessage}}
+{\footnotesize\ttfamily char g\+\_\+sz\+New\+Message\mbox{[}\mbox{\hyperlink{_bus_stop_a_8ino_a6821bafc3c88dfb2e433a095df9940c6}{BUF\+\_\+\+SIZE}}\mbox{]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}OUT\ OF\ SERVICE."{}}\}}
+
+\end{DoxyCode}
+
+
+The new message. 
+
+\Hypertarget{_bus_stop_b_8ino_a487b5baa75ea6db15433aa58c4a833c9}\label{_bus_stop_b_8ino_a487b5baa75ea6db15433aa58c4a833c9} 
+\index{BusStopB.ino@{BusStopB.ino}!g\_uiScrollPause@{g\_uiScrollPause}}
+\index{g\_uiScrollPause@{g\_uiScrollPause}!BusStopB.ino@{BusStopB.ino}}
+\doxysubsubsection{\texorpdfstring{g\_uiScrollPause}{g\_uiScrollPause}}
+{\footnotesize\ttfamily uint16\+\_\+t g\+\_\+ui\+Scroll\+Pause}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\ \ \ \ 200}
+
+\end{DoxyCode}
+
+
+The pause time of the scroll in milliseconds. 
+
+\Hypertarget{_bus_stop_b_8ino_a493e81ea8983e0f797dc47c3f65cf9c0}\label{_bus_stop_b_8ino_a493e81ea8983e0f797dc47c3f65cf9c0} 
+\index{BusStopB.ino@{BusStopB.ino}!P@{P}}
+\index{P@{P}!BusStopB.ino@{BusStopB.ino}}
+\doxysubsubsection{\texorpdfstring{P}{P}}
+{\footnotesize\ttfamily MD\+\_\+\+Parola P}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ MD\_Parola(}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{_bus_stop_b_8ino_a04988e7d812ffad244fd37a708b92536}{HARDWARE\_TYPE}},\ \mbox{\hyperlink{_bus_stop_b_8ino_adad67fe595ea440c8f8247ec2cddf070}{DATA\_PIN}},\ \mbox{\hyperlink{_bus_stop_b_8ino_a40f496979bb9d7199cca5e0ce136e698}{CLK\_PIN}},\ \mbox{\hyperlink{_bus_stop_b_8ino_abfcf05153ddbd63d5aff5d018867cc19}{CS\_PIN}},}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{_bus_stop_b_8ino_a4e132cfaa78353e3af1474a86b2dd535}{MAX\_DEVICES}})}
+
+\end{DoxyCode}
+
+
+Instance of the MD\+\_\+\+Parola class. 
+
